@@ -1,0 +1,98 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "SInteractActor.h"
+#include "SGameMacros.h"
+#include "UGameBlueprintFunctionLibrary.h"
+#include "Components/SphereComponent.h"
+
+
+ASInteractActor::ASInteractActor()
+{
+	PrimaryActorTick.bCanEverTick = true;
+
+	SceneComp=CreateDefaultSubobject<USceneComponent>(TEXT("SceneComp"));
+	RootComponent=SceneComp;
+
+	InteractComp=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("InteractComp"));
+	InteractComp->SetupAttachment(RootComponent);
+	
+	SphereComp=CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
+	SphereComp->SetupAttachment(InteractComp);
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this,&ASInteractActor::OnActorOverLap);
+
+	InteractComp->SetCollisionProfileName("Item");
+	
+}
+
+void ASInteractActor::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	
+	SetMesh();
+}
+
+void ASInteractActor::GetCategory_Implementation(FName& Name)
+{
+
+	ActorGetCategory(Name);
+	
+}
+
+void ASInteractActor::OnActorOverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+}
+
+void ASInteractActor::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void ASInteractActor::SetMesh()
+{
+	bool bIsFound;
+	FSItemCategory ItemCategory;
+	UGameBlueprintFunctionLibrary::FindItemInDataTable(Item,bIsFound,ItemCategory);
+	if(bIsFound)
+	{
+		InteractComp->SetStaticMesh(ItemCategory.InteractStaticMesh);
+	}
+	else
+	{
+		DISPLAY_LOG(TEXT("Fail to Set StaticMesh!"));
+	}
+	
+}
+
+void ASInteractActor::ActorGetCategory(FName& CategoryName)
+{
+	bool bIsFound;
+	FSItemCategory ItemCategory;
+	UGameBlueprintFunctionLibrary::FindItemInDataTable(Item,bIsFound,ItemCategory);
+
+	if(!bIsFound)
+	{
+		return;
+	}
+
+	switch (ItemCategory.Category)
+	{
+	case ECategory::Pick_Up:
+		CategoryName = FName("Pick Up");
+		break;
+	case ECategory::Interact:
+		CategoryName = FName("Interact");
+		break;
+	case ECategory::Dialogue:
+		CategoryName = FName("Dialogue");
+		break;
+	default:
+		CategoryName = FName("None");
+		break;
+	}
+}
+
+
+
+
