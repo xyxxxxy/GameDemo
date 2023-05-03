@@ -25,19 +25,27 @@ bool USAction::IsRunning() const
 	return bIsRunning;
 }
 
+void USAction::ValReset()
+{
+}
+
 bool USAction::CanStart_Implementation(AActor* Instigator)
 {
+	
 	if(IsRunning())
 	{
+		DISPLAY_LOG(FString("is Running : ").Append(GetNameSafe(this)));
 		return false;
 	}
 	if(const USActionComponent* Comp=GetOwningComponent())
 	{
 		if(Comp->ActiveTag.HasAny(BlockedTags))
 		{
+			DISPLAY_LOG(FString("HasBlockedTags : ").Append(GetNameSafe(this)));
 			return false;
 		}
 	}
+	DISPLAY_LOG(FString("Can Start : ").Append(GetNameSafe(this)));
 	return true;
 	
 }
@@ -60,6 +68,7 @@ void USAction::StopAction_Implementation(AActor* Instigator)
 	ensureAlways(bIsRunning);
 	if(USActionComponent* Comp=GetOwningComponent())
 	{
+		ValReset();
 		Comp->ActiveTag.RemoveTags(GrantTags);
 		bIsRunning=false;
 		Comp->OnActionStopped.Broadcast(Comp,this);

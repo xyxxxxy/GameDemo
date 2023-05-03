@@ -54,7 +54,10 @@ protected:
 	void StartSprint();
 
 	void StopSprint();
-
+	
+	void MainActionDeploy();
+	
+	void Action();
 public:	
 	
 	

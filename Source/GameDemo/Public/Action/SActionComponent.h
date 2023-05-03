@@ -37,6 +37,9 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly,Category="Action")
 	FName MainActionsName;
+
+	UPROPERTY()
+	bool bIsMainActionDeployed = false;
 	
 	virtual void BeginPlay() override;
 
@@ -59,6 +62,12 @@ public:
 
 	UFUNCTION(BlueprintCallable,Category="Action")
 	void SwitchMainAction(AActor* Instigator,TSubclassOf<USAction> ActionSwitchTo);
+
+	UFUNCTION(BlueprintCallable,Category="Action")
+	bool IsMainActionDeployed() const;
+
+	UFUNCTION()
+	void SetMainActionDeployed(bool NewState);
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnActionStateChanged OnActionStarted;

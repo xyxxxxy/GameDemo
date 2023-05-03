@@ -10,7 +10,7 @@ USActionComponent::USActionComponent()
 {
 
 	PrimaryComponentTick.bCanEverTick = true;
-	MainActionsName = "MainActions";
+	MainActionsName = "MainAction";
 }
 
 
@@ -105,6 +105,19 @@ void USActionComponent::SwitchMainAction(AActor* Instigator, TSubclassOf<USActio
 		}
 	}
 
+}
+
+bool USActionComponent::IsMainActionDeployed() const
+{
+	return bIsMainActionDeployed;
+}
+
+void USActionComponent::SetMainActionDeployed(bool NewState)
+{
+	if(NewState != bIsMainActionDeployed)
+	{
+		bIsMainActionDeployed=NewState;
+	}
 }
 
 

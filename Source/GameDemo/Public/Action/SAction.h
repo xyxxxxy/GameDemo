@@ -26,6 +26,12 @@ protected:
 	UPROPERTY(EditAnywhere,Category="Tags")
 	FGameplayTagContainer GrantTags;
 
+	UPROPERTY(EditDefaultsOnly,Category="Action")
+	UAnimMontage* ActionAnimMontage;
+
+	UPROPERTY(EditDefaultsOnly,Category="Action")
+	UTexture2D* ActionIcon;
+	
 	bool bIsRunning;
 	
 public:
@@ -46,6 +52,8 @@ public:
 
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category="Action")
 	void StopAction(AActor* Instigator);
+
+	virtual void ValReset();
 
 
 };
