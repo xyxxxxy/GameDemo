@@ -49,7 +49,10 @@ protected:
 
 	UPROPERTY()
 	AActor* FocusActor;
-
+	
+private:
+	bool SetTickEnabled(bool NewState);
+	
 public:
 
 	UPROPERTY(BlueprintAssignable)

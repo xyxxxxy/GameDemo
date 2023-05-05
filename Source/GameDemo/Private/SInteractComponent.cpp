@@ -124,19 +124,19 @@ void USInteractComponent::OpenInteractUI()
 	}
 }
 
+bool USInteractComponent::SetTickEnabled(bool NewState)
+{
+	SetComponentTickEnabled(NewState);
+	return NewState;
+}
+
 void USInteractComponent::TraceInteract(APawn* InstigatorActor)
 {
-	if(!FocusActor)
+	
+	if(FocusActor && FocusActor->Implements<USInteractInterface>())
 	{
-		return;
-	}
-	if(ASInteractActor* actor=Cast<ASInteractActor>(FocusActor))
-	{
-		if(actor->Implements<USInteractInterface>())
-		{
-			actor->Interact_Implementation(InstigatorActor);
-		}
-		
+		DISPLAY_LOG(TEXT("Interact success?"));
+		ISInteractInterface::Execute_Interact(FocusActor,InstigatorActor);
 	}
 	
 	DISPLAY_LOG(TEXT("Interact success!"));

@@ -14,12 +14,11 @@ ASActor_Connection::ASActor_Connection()
 	RootComponent=RootComp;
 
 	SceneComp=CreateDefaultSubobject<USceneComponent>(TEXT("SceneComp"));
-	SceneComp->SetupAttachment(RootComp);
+	SceneComp->SetupAttachment(RootComponent);
 	
 	ConnectionComp=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ConnectionComp"));
 	ConnectionComp->SetupAttachment(SceneComp);
 
-	RelativeLocation=ConnectionComp->GetRelativeLocation()*2.0f;
 	Time=0.0f;
 }
 
@@ -29,19 +28,27 @@ void ASActor_Connection::Connect()
 	
 	float TotalLength=UKismetMathLibrary::VSize(EndLocation-StartLocation);
 	float EndScale=TotalLength/UKismetMathLibrary::VSize(RelativeLocation);
-	float Scale = FMath::Lerp(1.0f,EndScale,Time);
+	float Scale = FMath::Lerp(0.1f,EndScale,Time/2);
 	SetActorScale3D(FVector(Scale,1.0f,1.0f));
+}
+
+void ASActor_Connection::BeginPlay()
+{
+	Super::BeginPlay();
+	RelativeLocation=ConnectionComp->GetRelativeLocation()*2.0f;
+	
 }
 
 // Called every frame
 void ASActor_Connection::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if(Time>=1.0f)
+	if(Time>=2.0f)
 	{
 		return;
 	}
 	Time+=DeltaTime;
+	Connect();
 
 }
 

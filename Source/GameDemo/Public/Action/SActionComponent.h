@@ -15,6 +15,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionStateChanged,
 	class USActionComponent*,OwningComp,
 	USAction*, Action);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionDeployChanged,
+	class USActionComponent*,OwningComp,
+	AActor*, Instigator);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAMEDEMO_API USActionComponent : public UActorComponent
 {
@@ -23,25 +27,33 @@ class GAMEDEMO_API USActionComponent : public UActorComponent
 public:	
 
 	USActionComponent();
+	
+private:
+	UPROPERTY()
+	bool bIsMainActionDeployed = false;
+
+	void TraceDeploy();
 
 protected:
 
 	UPROPERTY(EditAnywhere,Category="Action")
 	TArray<TSubclassOf<USAction>> DefaultActions;
+
+	UPROPERTY(EditAnywhere,Category="Action")
+	TArray<TSubclassOf<USAction>> DefaultMainActions;
 	
 	UPROPERTY(BlueprintReadOnly,Category="Action")
 	TArray<USAction*> Actions;
-
-	UPROPERTY(EditDefaultsOnly,Category="Action")
-	USAction* MainActions;
 	
 	UPROPERTY(BlueprintReadOnly,Category="Action")
 	FName MainActionsName;
 
 	UPROPERTY()
-	bool bIsMainActionDeployed = false;
+	USAction* CurrentMainAction;
 	
 	virtual void BeginPlay() override;
+
+	void ActionTraceCheck();
 
 public:	
 
@@ -68,10 +80,20 @@ public:
 
 	UFUNCTION()
 	void SetMainActionDeployed(bool NewState);
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	bool HaveMainAction() const;
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnActionStateChanged OnActionStarted;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnActionStateChanged OnActionStopped;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnActionDeployChanged OnMainActionStartDeployed;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnActionDeployChanged OnMainActionEndDeployed;
 };

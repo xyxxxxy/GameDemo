@@ -117,12 +117,12 @@ void ASGameCharacter::StopSprint()
 
 void ASGameCharacter::MainActionDeploy()
 {
-	if(ActionComp)
+	if(ActionComp && ActionComp->HaveMainAction())
 	{
 		if(ActionComp->IsMainActionDeployed())
 		{
 			DISPLAY_LOG(TEXT("1"));
-			ActionComp->StopActionByName(this,"MainAction");
+			ActionComp->StopActionByName(this,FName("MainAction"));
 		}
 		else
 		{
@@ -135,7 +135,7 @@ void ASGameCharacter::MainActionDeploy()
 
 void ASGameCharacter::Action()
 {
-	if(ActionComp && ActionComp->IsMainActionDeployed())
+	if(ActionComp && ActionComp->HaveMainAction() && ActionComp->IsMainActionDeployed())
 	{
 		ActionComp->StartActionByName(this,"MainAction");
 	}

@@ -25,7 +25,24 @@ bool USAction::IsRunning() const
 	return bIsRunning;
 }
 
-void USAction::ValReset()
+void USAction::InitialVariable()
+{
+}
+
+void USAction::ValReset_Implementation()
+{
+	InitialVariable();
+	DISPLAY_LOG(TEXT("Reset!"));
+}
+
+void USAction::K2_StartDeploy_Implementation(USActionComponent* OwningComp,AActor* Instigator)
+{
+	bIsRunning=true;
+	GetOwningComponent()->SetComponentTickEnabled(true);
+	ValReset();
+}
+
+void USAction::K2_EndDeploy_Implementation(USActionComponent* OwningComp, AActor* Instigator)
 {
 }
 
@@ -69,6 +86,7 @@ void USAction::StopAction_Implementation(AActor* Instigator)
 	if(USActionComponent* Comp=GetOwningComponent())
 	{
 		ValReset();
+		Comp->SetComponentTickEnabled(false);
 		Comp->ActiveTag.RemoveTags(GrantTags);
 		bIsRunning=false;
 		Comp->OnActionStopped.Broadcast(Comp,this);

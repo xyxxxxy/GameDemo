@@ -8,7 +8,8 @@ public class GameDemo : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore","GameplayTags","PhysicsCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine",
+			"InputCore","GameplayTags","PhysicsCore","Niagara" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

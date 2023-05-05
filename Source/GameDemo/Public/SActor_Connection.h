@@ -33,12 +33,14 @@ protected:
 
 	UFUNCTION()
 	void Connect();
+
+	virtual void BeginPlay() override;
 	
 public:
-	UPROPERTY(EditAnywhere,Category="Connection")
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Connection",meta=(ExposeOnSpawn))
 	FVector StartLocation;
 
-	UPROPERTY(EditAnywhere,Category="Connection")
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Connection",meta=(ExposeOnSpawn))
 	FVector EndLocation;
 
 	virtual void Tick(float DeltaTime) override;

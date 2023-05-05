@@ -4,12 +4,14 @@
 #include "Action/SActionComponent.h"
 
 #include "Action/SAction.h"
+#include "SGameMacros.h"
 
 
 USActionComponent::USActionComponent()
 {
-
-	PrimaryComponentTick.bCanEverTick = true;
+	
+	PrimaryComponentTick.bCanEverTick=true;
+	
 	MainActionsName = "MainAction";
 }
 
@@ -18,12 +20,27 @@ USActionComponent::USActionComponent()
 void USActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	SetComponentTickEnabled(false);
 	for(const TSubclassOf<USAction> ActionClass:DefaultActions)
 	{
 		AddAction(GetOwner(),ActionClass);
 	}
-	
+	for(const TSubclassOf<USAction> ActionClass:DefaultMainActions)
+	{
+		AddAction(GetOwner(),ActionClass);
+	}
+	if(DefaultMainActions.Num()>0)
+	{
+		CurrentMainAction=Actions[DefaultActions.Num()];
+	}
+}
+
+void USActionComponent::ActionTraceCheck()
+{
+	if(CurrentMainAction && CurrentMainAction->Implements<USActionInterface>())
+	{
+		CurrentMainAction->TraceInspection_Implementation(GetOwner());
+	}
 }
 
 void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass)
@@ -32,11 +49,29 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 	{
 		return;
 	}
+	for(USAction* Action:Actions)
+	{
+		if(ActionClass == Action->GetClass())
+		{
+			return;
+		}
+	}
 	USAction* NewAction=NewObject<USAction>(this,ActionClass);
 	if(ensure(NewAction))
 	{
 		Actions.Add(NewAction);
+		OnMainActionStartDeployed.AddDynamic(NewAction,&USAction::K2_StartDeploy);
+		OnMainActionEndDeployed.AddDynamic(NewAction,&USAction::K2_EndDeploy);
+		
+		if(NewAction->ActionName==MainActionsName)
+		{
+			if(CurrentMainAction!=NewAction)
+			{
+				CurrentMainAction=NewAction;
+			}
+		}
 	}
+
 	
 }
 
@@ -44,9 +79,9 @@ bool USActionComponent::StartActionByName(AActor* Instigator,FName Name)
 {
 	if(Name == MainActionsName)
 	{
-		if(MainActions && MainActions->CanStart(Instigator))
+		if(CurrentMainAction && CurrentMainAction->CanStart(Instigator))
 		{
-			MainActions->StartAction(Instigator);
+			CurrentMainAction->StartAction(Instigator);
 			return true;
 		}
 	}
@@ -65,9 +100,9 @@ bool USActionComponent::StopActionByName(AActor* Instigator,FName Name)
 {
 	if(Name == MainActionsName)
 	{
-		if(MainActions && MainActions->IsRunning())
+		if(CurrentMainAction && CurrentMainAction->IsRunning())
 		{
-			MainActions->StopAction(Instigator);
+			CurrentMainAction->StopAction(Instigator);
 			return true;
 		}
 	}
@@ -93,15 +128,18 @@ void USActionComponent::RemoveAction(AActor* Instigator, USAction* ActionToRemov
 
 void USActionComponent::SwitchMainAction(AActor* Instigator, TSubclassOf<USAction> ActionSwitchTo)
 {
-	if(MainActions->GetClass() == ActionSwitchTo)
+	
+	if(CurrentMainAction->GetClass() == ActionSwitchTo)
 	{
+		DISPLAY_LOG(TEXT("Switch Equal!"));
 		return;
 	}
 	for(USAction* Action : Actions)
 	{
-		if(Action->GetClass() == ActionSwitchTo)
+		if(ActionSwitchTo == Action->GetClass())
 		{
-			MainActions = Action;
+			DISPLAY_LOG(TEXT("Success to Switch!"));
+			CurrentMainAction = Action;
 		}
 	}
 
@@ -114,10 +152,31 @@ bool USActionComponent::IsMainActionDeployed() const
 
 void USActionComponent::SetMainActionDeployed(bool NewState)
 {
-	if(NewState != bIsMainActionDeployed)
+	bIsMainActionDeployed=NewState;
+	if(bIsMainActionDeployed)
 	{
-		bIsMainActionDeployed=NewState;
+		OnMainActionStartDeployed.Broadcast(this,GetOwner());
 	}
+	else
+	{
+		OnMainActionEndDeployed.Broadcast(this,GetOwner());
+	}
+}
+
+void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	ActionTraceCheck();
+}
+
+bool USActionComponent::HaveMainAction() const
+{
+	if(CurrentMainAction)
+	{
+		return true;
+	}
+	return false;
 }
 
 

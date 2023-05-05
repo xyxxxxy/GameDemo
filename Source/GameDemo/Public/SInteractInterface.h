@@ -16,11 +16,11 @@ class GAMEDEMO_API ISInteractInterface
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable,Category="Interact")
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Interact")
 	void Interact(APawn* InstigatorActor);
 	virtual void Interact_Implementation(APawn* InstigatorActor);
 
-	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable,Category="Interact")
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Interact")
 	void GetCategory(FName& Name);
 	virtual void GetCategory_Implementation(FName& Name);
 };

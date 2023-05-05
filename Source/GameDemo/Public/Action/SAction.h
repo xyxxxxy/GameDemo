@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "SActionInterface.h"
 #include "UObject/NoExportTypes.h"
 #include "SAction.generated.h"
 
@@ -11,7 +12,7 @@ class USActionComponent;
 class UWorld;
 
 UCLASS(Blueprintable)
-class GAMEDEMO_API USAction : public UObject
+class GAMEDEMO_API USAction : public UObject,public ISActionInterface
 {
 	GENERATED_BODY()
 
@@ -53,7 +54,15 @@ public:
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category="Action")
 	void StopAction(AActor* Instigator);
 
-	virtual void ValReset();
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Action",meta=(DisplayName="StartDeploy"))
+	void K2_StartDeploy(USActionComponent* OwningComp,AActor* Instigator);
 
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Action",meta=(DisplayName="EndDeploy"))
+	void K2_EndDeploy(USActionComponent* OwningComp,AActor* Instigator);
 
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category="Action")
+	void ValReset();
+
+	virtual void InitialVariable();
+	
 };

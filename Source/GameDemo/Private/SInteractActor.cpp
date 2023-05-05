@@ -4,7 +4,6 @@
 #include "SInteractActor.h"
 #include "SGameMacros.h"
 #include "UGameBlueprintFunctionLibrary.h"
-#include "Components/SphereComponent.h"
 
 
 ASInteractActor::ASInteractActor()
@@ -17,9 +16,7 @@ ASInteractActor::ASInteractActor()
 	InteractComp=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("InteractComp"));
 	InteractComp->SetupAttachment(RootComponent);
 	
-	SphereComp=CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	SphereComp->SetupAttachment(InteractComp);
-	SphereComp->OnComponentBeginOverlap.AddDynamic(this,&ASInteractActor::OnActorOverLap);
+
 
 	InteractComp->SetCollisionProfileName("Item");
 	
@@ -37,11 +34,6 @@ void ASInteractActor::GetCategory_Implementation(FName& Name)
 
 	ActorGetCategory(Name);
 	
-}
-
-void ASInteractActor::OnActorOverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
 }
 
 void ASInteractActor::BeginPlay()
