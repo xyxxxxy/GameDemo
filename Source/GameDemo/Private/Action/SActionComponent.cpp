@@ -63,7 +63,7 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 		OnMainActionStartDeployed.AddDynamic(NewAction,&USAction::K2_StartDeploy);
 		OnMainActionEndDeployed.AddDynamic(NewAction,&USAction::K2_EndDeploy);
 		
-		if(NewAction->ActionName==MainActionsName)
+		if(NewAction->GetActionCategory() == EActionCategory::MainAction)
 		{
 			if(CurrentMainAction!=NewAction)
 			{
@@ -167,7 +167,12 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	ActionTraceCheck();
+
+	if(CurrentMainAction->CanEnableTick())
+	{
+		ActionTraceCheck();
+	}
+
 }
 
 bool USActionComponent::HaveMainAction() const

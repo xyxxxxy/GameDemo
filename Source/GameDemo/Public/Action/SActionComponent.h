@@ -45,7 +45,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly,Category="Action")
 	TArray<USAction*> Actions;
 	
-	UPROPERTY(BlueprintReadOnly,Category="Action")
+	UPROPERTY(VisibleDefaultsOnly,BlueprintReadOnly,Category="Action")
 	FName MainActionsName;
 
 	UPROPERTY()

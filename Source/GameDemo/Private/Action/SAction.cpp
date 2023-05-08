@@ -29,6 +29,16 @@ void USAction::InitialVariable()
 {
 }
 
+bool USAction::CanEnableTick() const
+{
+	return bIsEnableTick;
+}
+
+TEnumAsByte<EActionCategory::Type> USAction::GetActionCategory() const
+{
+	return ActionCategory;
+}
+
 void USAction::ValReset_Implementation()
 {
 	InitialVariable();

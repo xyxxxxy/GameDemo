@@ -7,10 +7,12 @@
 #include "SGameCharacter.h"
 #include "Action/SActionComponent.h"
 #include "SGameMacros.h"
+#include "VREditorMode.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/StaticMeshActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+
 
 static TAutoConsoleVariable<bool> CShowTrace(TEXT("Action.ShowTrace"),true,
                                              TEXT("Enable Show Trace."),ECVF_Cheat);
@@ -85,6 +87,7 @@ void USAction_Connection::TraceInspection_Implementation(AActor* Instigator)
 		
 		if(HitResult.bBlockingHit)
 		{
+
 			UPrimitiveComponent* Comp=HitResult.GetComponent();
 			if(HitResult.PhysMaterial.Get() == ConnectionMaterial)
 			{
@@ -175,6 +178,10 @@ void USAction_Connection::FirstTrace(AActor* Instigator)
 		
 		if(HitResult.bBlockingHit)
 		{
+			if(IsConnectionClass(HitResult))
+			{
+				return;
+			}
 			if(HitResult.PhysMaterial.Get() == ConnectionMaterial)
 			{
 				HitComponent=HitResult.GetComponent();
@@ -182,7 +189,13 @@ void USAction_Connection::FirstTrace(AActor* Instigator)
 				FirstComponent->GetMaterialFromCollisionFaceIndex(HitResult.FaceIndex,FirstSectionIndex);
 				FirstActor=HitResult.GetActor();
 				FirstLocation=HitResult.Location;
+				if(ensureMsgf(CollisionCue,TEXT("Your Connection CollisionCue?")))
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(),CollisionCue,FirstLocation,FRotator::ZeroRotator);
+				}
+		
 				bIsStartSet=true;
+				
 				DISPLAY_LOG(FString("First : ").Append(GetNameSafe(this)));
 			}
 		}
@@ -209,11 +222,17 @@ void USAction_Connection::SecondTrace(AActor* Instigator)
 		}
 		if(HitResult.bBlockingHit)
 		{
+
 			if(HitResult.PhysMaterial.Get() == ConnectionMaterial && HitResult.GetComponent() !=HitComponent)
 			{
-				SecondLocation=HitResult.Location;
+		
 				HitComponent=nullptr;
 				bIsStartSet=false;
+				SecondLocation=HitResult.Location;
+				if(ensureMsgf(CollisionCue,TEXT("Your Connection CollisionCue?")))
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(),CollisionCue,SecondLocation,FRotator::ZeroRotator);
+				}
 				DISPLAY_LOG(FString("Second : ").Append(GetNameSafe(this)));
 			}
 		}
@@ -231,16 +250,11 @@ bool USAction_Connection::HasObstacle(AActor* Instigator)
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(FirstActor);
-	//QueryParams.bTraceComplex=true;
-	//QueryParams.bReturnPhysicalMaterial=true;
-	
 	
 	GetWorld()->SweepSingleByChannel(HitResult,FirstLocation,SecondLocation,
 		FQuat::Identity,ECC_Visibility,FCollisionShape::MakeSphere(SphereRadius),
 		QueryParams);
-	// GetWorld()->LineTraceSingleByChannel(HitResult,FirstLocation,SecondLocation,
-	// 	ECC_Visibility,QueryParams);
-		
+
 	if(CShowTrace.GetValueOnAnyThread())
 	{
 		const FColor Color=HitResult.bBlockingHit?FColor::Green:FColor::Red;
@@ -248,6 +262,10 @@ bool USAction_Connection::HasObstacle(AActor* Instigator)
 			4,Color,false,3.0f);
 	}
 	if(!HitResult.bBlockingHit)
+	{
+		return false;
+	}
+	if(HitResult.GetComponent()->IsSimulatingPhysics())
 	{
 		return false;
 	}
@@ -282,13 +300,25 @@ void USAction_Connection::InitialVariable()
 	FirstComponent=nullptr;
 }
 
-void USAction_Connection::UpdateSingleMaterial(int32 SectionIndex, UPrimitiveComponent* PrimitiveComp,
-	UMaterialInstance* NewMaterial)
+bool USAction_Connection::IsConnectionClass(const FHitResult& HitResult) const
+{
+	if(HitResult.GetActor()->GetClass() == DefaultConnectionClass)
+	{
+		HitResult.GetActor()->Destroy();
+		return true;
+	}
+	return false;
+}
+
+bool USAction_Connection::UpdateSingleMaterial(int32 SectionIndex, UPrimitiveComponent* PrimitiveComp,
+                                               UMaterialInstance* NewMaterial)
 {
 	if(IsValidFace(SectionIndex,PrimitiveComp))
 	{
 		PrimitiveComp->SetMaterial(SectionIndex,NewMaterial);
+		return true;
 	}
+	return false;
 }
 
 

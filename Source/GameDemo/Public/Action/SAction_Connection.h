@@ -7,7 +7,9 @@
 #include "SAction_Connection.generated.h"
 
 
+class ASActor_Connection;
 class AStaticMeshActor;
+
 UCLASS()
 class GAMEDEMO_API USAction_Connection : public USAction
 {
@@ -38,6 +40,12 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly,Category = "Connection")
 	FVector SecondLocation;
+
+	UPROPERTY(EditAnywhere,Category="Connection")
+	TSubclassOf<AActor> DefaultConnectionClass;
+
+	UPROPERTY(EditAnywhere,Category="Sound")
+	USoundBase* CollisionCue;
 	
 	UPROPERTY(EditAnywhere,Category="Obstacle")
 	float TraceTolerance = 10.0f;
@@ -48,22 +56,22 @@ protected:
 	UFUNCTION(BlueprintCallable,Category="Connection")
 	void UpdateMaterials(TArray<AStaticMeshActor*> Actors,bool bIsToDeploy);
 
-	
+	UFUNCTION(BlueprintImplementableEvent,meta=(DisplayName="SpawnConnection"))
+	void K2_SpawnConnections();
 
 	void FirstTrace(AActor* Instigator);
 
 	void SecondTrace(AActor* Instigator);
 
 	bool HasObstacle(AActor* Instigator);
-
-	UFUNCTION(BlueprintImplementableEvent,meta=(DisplayName="SpawnConnection"))
-	void K2_SpawnConnections();
-
+	
 	bool IsValidFace(int32 SectionIndex,UPrimitiveComponent* PrimitiveComp);
 
-	void UpdateSingleMaterial(int32 SectionIndex,UPrimitiveComponent* PrimitiveComp,UMaterialInstance* NewMaterial);
+	bool UpdateSingleMaterial(int32 SectionIndex,UPrimitiveComponent* PrimitiveComp,UMaterialInstance* NewMaterial);
 
 	virtual  void InitialVariable() override;
+
+	bool IsConnectionClass(const FHitResult& HitResult) const;
 	
 private:
 

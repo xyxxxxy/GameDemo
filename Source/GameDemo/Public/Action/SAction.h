@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "SActionData.h"
 #include "SActionInterface.h"
 #include "UObject/NoExportTypes.h"
 #include "SAction.generated.h"
@@ -17,23 +18,30 @@ class GAMEDEMO_API USAction : public UObject,public ISActionInterface
 	GENERATED_BODY()
 
 protected:
-	
-	UFUNCTION(BlueprintCallable,Category="Action")
-	USActionComponent* GetOwningComponent() const;
-	
 	UPROPERTY(EditAnywhere,Category="Tags")
 	FGameplayTagContainer BlockedTags;
 
 	UPROPERTY(EditAnywhere,Category="Tags")
 	FGameplayTagContainer GrantTags;
-
+	
 	UPROPERTY(EditDefaultsOnly,Category="Action")
 	UAnimMontage* ActionAnimMontage;
 
 	UPROPERTY(EditDefaultsOnly,Category="Action")
 	UTexture2D* ActionIcon;
+
+	UPROPERTY(EditDefaultsOnly,Category="Action")
+	bool bIsEnableTick = false;
+
+	UPROPERTY(EditDefaultsOnly,Category="Action")
+	TEnumAsByte<EActionCategory::Type> ActionCategory = EActionCategory::NormalAction;
 	
 	bool bIsRunning;
+
+	
+
+	UFUNCTION(BlueprintCallable,Category="Action")
+	USActionComponent* GetOwningComponent() const;
 	
 public:
 	
@@ -64,5 +72,9 @@ public:
 	void ValReset();
 
 	virtual void InitialVariable();
+
+	bool CanEnableTick() const;
+
+	TEnumAsByte<EActionCategory::Type> GetActionCategory() const;
 	
 };

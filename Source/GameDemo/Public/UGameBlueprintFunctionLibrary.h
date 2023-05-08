@@ -4,10 +4,9 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SItem.h"
+#include "Action/SActionData.h"
 #include "UGameBlueprintFunctionLibrary.generated.h"
 
-struct FSItem;
-struct FSItemCategory;
 class ASGameCharacter;
 
 UCLASS(meta=( DisplayName = "GameLibrary"))
@@ -21,8 +20,11 @@ public:
 	static ASGameCharacter* GetPlayer();
 	
 	UFUNCTION(BlueprintCallable,Category="GameLibrary | Player")
-	static void EnabledInput(bool bIsEnabled);
+	static void ControlPlayerInput(bool bIsEnabled);
 
 	UFUNCTION(BlueprintCallable,Category="GameLibrary | Item")
-	static void FindItemInDataTable( FSItem item,bool& bIsFound,FSItemCategory& Category);
+	static void FindItemInDataTable( FSItem item,bool& bIsFound,FSItemCategory& Property);
+
+	UFUNCTION(BlueprintCallable,Category="GameLibrary | Action")
+	static void FindActionInDataTable( FName Name,bool& bIsFound,FSActionProperty& Property);
 };

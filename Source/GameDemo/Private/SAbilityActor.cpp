@@ -2,8 +2,10 @@
 
 #include "SAbilityActor.h"
 
+#include "NiagaraComponent.h"
 #include "Action/SActionComponent.h"
 #include "SGameMacros.h"
+#include "UGameBlueprintFunctionLibrary.h"
 
 void ASAbilityActor::Interact_Implementation(APawn* InstigatorActor)
 {
@@ -20,6 +22,20 @@ void ASAbilityActor::Interact_Implementation(APawn* InstigatorActor)
 		}
 
 	}
+
+	K2_CreateActionWidget();
 	Destroy();
-	
 }
+
+void ASAbilityActor::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	bool bIsFound;
+	FSActionProperty Property;
+	UGameBlueprintFunctionLibrary::FindActionInDataTable(ActionName,bIsFound,Property);
+	if(bIsFound)
+	{
+		NiagaraComp->SetAsset(Property.ActionNiagara);
+	}
+}
+
