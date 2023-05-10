@@ -3,38 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Action/SAction.h"
-#include "SAction_Connection.generated.h"
+#include "Action/SMainAction.h"
+//#include "Action/SAction.h"
+#include "SMainAction_Connection.generated.h"
 
 
 class ASActor_Connection;
 class AStaticMeshActor;
 
 UCLASS()
-class GAMEDEMO_API USAction_Connection : public USAction
+class GAMEDEMO_API USMainAction_Connection : public USMainAction
 {
 	GENERATED_BODY()
 
 protected:
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Connection")
-	UMaterialInstance* NormalMaterial;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Connection")
-	UMaterialInstance* SelectedMaterial;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Connection")
-	UMaterialInstance* DeployedMaterial;
-
-	UPROPERTY(EditAnywhere,Category="Connection")
-	UPhysicalMaterial* ConnectionMaterial;
-
-	UPROPERTY(EditAnywhere,Category = "Connection")
-	float TraceDistance;
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Connection")
-	FName ConnectionTag;
-
 	UPROPERTY(BlueprintReadOnly,Category = "Connection")
 	FVector FirstLocation;
 
@@ -52,9 +35,8 @@ protected:
 
 	UPROPERTY(EditAnywhere,Category="Obstacle")
 	float SphereRadius;
+	
 
-	UFUNCTION(BlueprintCallable,Category="Connection")
-	void UpdateMaterials(TArray<AStaticMeshActor*> Actors,bool bIsToDeploy);
 
 	UFUNCTION(BlueprintImplementableEvent,meta=(DisplayName="SpawnConnection"))
 	void K2_SpawnConnections();
@@ -75,9 +57,12 @@ protected:
 	
 private:
 
-	UPROPERTY()
-	bool bIsStartSet = false;
+	bool bIsFirstTraceSet = false;
 
+	int32 PreSectionIndex = -1;
+
+	int32 FirstSectionIndex = -1;
+	
 	UPROPERTY()
 	UPrimitiveComponent*  HitComponent;
 	
@@ -87,11 +72,7 @@ private:
 	UPROPERTY()
 	UPrimitiveComponent*  TraceComponent;
 	
-	UPROPERTY()
-	int32 PreSectionIndex = -1;
 
-	UPROPERTY()	
-	int32 FirstSectionIndex = -1;
 
 	UPROPERTY()
 	UPrimitiveComponent* FirstComponent;
@@ -99,14 +80,11 @@ private:
 	
 public:
 	
-	virtual bool CanStart_Implementation(AActor* Instigator) override;
-
 	virtual void StartAction_Implementation(AActor* Instigator) override;
-
-	virtual void StopAction_Implementation(AActor* Instigator) override;
 	
 	virtual void TraceInspection_Implementation(AActor* Instigator) override;
-	
+
+	virtual  void UpdateMaterials(TArray<AStaticMeshActor*> Actors,bool bIsToDeploy) override;
 };
 
 

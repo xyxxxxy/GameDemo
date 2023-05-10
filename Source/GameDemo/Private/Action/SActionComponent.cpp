@@ -3,8 +3,9 @@
 
 #include "Action/SActionComponent.h"
 
-#include "Action/SAction.h"
+//#include "Action/SAction.h"
 #include "SGameMacros.h"
+#include "Action/SMainAction.h"
 
 
 USActionComponent::USActionComponent()
@@ -100,8 +101,10 @@ bool USActionComponent::StopActionByName(AActor* Instigator,FName Name)
 {
 	if(Name == MainActionsName)
 	{
+		
 		if(CurrentMainAction && CurrentMainAction->IsRunning())
 		{
+			
 			CurrentMainAction->StopAction(Instigator);
 			return true;
 		}
@@ -139,6 +142,7 @@ void USActionComponent::SwitchMainAction(AActor* Instigator, TSubclassOf<USActio
 		if(ActionSwitchTo == Action->GetClass())
 		{
 			DISPLAY_LOG(TEXT("Success to Switch!"));
+			OnActionSwitch.Broadcast(CurrentMainAction,Action,Instigator);
 			CurrentMainAction = Action;
 		}
 	}
@@ -147,6 +151,11 @@ void USActionComponent::SwitchMainAction(AActor* Instigator, TSubclassOf<USActio
 
 bool USActionComponent::IsMainActionDeployed() const
 {
+	if(USMainAction* MainAction=Cast<USMainAction>(CurrentMainAction))
+	{
+		return bIsMainActionDeployed && MainAction->ShouldStartMainAction(GetOwner());
+	}
+	
 	return bIsMainActionDeployed;
 }
 

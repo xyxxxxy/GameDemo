@@ -12,7 +12,7 @@
 #include "Camera/CameraComponent.h"
 #include "SGameMacros.h"
 
-static TAutoConsoleVariable<bool> CShowTrace(TEXT("s.ShowTrace"),
+static TAutoConsoleVariable<bool> CShowActionTrace(TEXT("s.ShowTrace"),
 	false,TEXT("Enable Show Trace."),ECVF_Cheat);
 
 USInteractComponent::USInteractComponent()
@@ -60,7 +60,7 @@ void USInteractComponent::TraceInspection()
 		GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,CollisionChannel);
 
 		// Console
-		if(CShowTrace.GetValueOnAnyThread())
+		if(CShowActionTrace.GetValueOnAnyThread())
 		{
 			const FColor TraceColor=HitResult.bBlockingHit?FColor::Green:FColor::Red;
 			DrawDebugLine(GetWorld(),Start,End,TraceColor,false,5.0f);

@@ -19,6 +19,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionDeployChanged,
 	class USActionComponent*,OwningComp,
 	AActor*, Instigator);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnActionSwitch,
+	USAction*, OldAction,
+	USAction* ,NewAction,
+	AActor*, Instigator);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAMEDEMO_API USActionComponent : public UActorComponent
 {
@@ -29,10 +34,8 @@ public:
 	USActionComponent();
 	
 private:
-	UPROPERTY()
-	bool bIsMainActionDeployed = false;
 
-	void TraceDeploy();
+	bool bIsMainActionDeployed = false;
 
 protected:
 
@@ -96,4 +99,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnActionDeployChanged OnMainActionEndDeployed;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnActionSwitch OnActionSwitch;
 };

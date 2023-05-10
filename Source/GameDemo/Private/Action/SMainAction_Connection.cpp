@@ -1,41 +1,24 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Action/SAction_Connection.h"
+#include "Action/SMainAction_Connection.h"
 
 #include "DrawDebugHelpers.h"
 #include "SGameCharacter.h"
 #include "Action/SActionComponent.h"
 #include "SGameMacros.h"
-#include "VREditorMode.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/StaticMeshActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
-static TAutoConsoleVariable<bool> CShowTrace(TEXT("Action.ShowTrace"),true,
-                                             TEXT("Enable Show Trace."),ECVF_Cheat);
 
-bool USAction_Connection::CanStart_Implementation(AActor* Instigator)
-{
-
-	if(const USActionComponent* Comp=GetOwningComponent())
-	{
-		if(Comp->ActiveTag.HasAny(BlockedTags))
-		{
-			return false;
-		}
-	}
-	DISPLAY_LOG(FString("Can Start : ").Append(GetNameSafe(this)));
-	return true;
-}
-
-void USAction_Connection::StartAction_Implementation(AActor* Instigator)
+void USMainAction_Connection::StartAction_Implementation(AActor* Instigator)
 {
 	Super::StartAction_Implementation(Instigator);
 
-	if(!bIsStartSet)
+	if(!bIsFirstTraceSet)
 	{
 		FirstTrace(Instigator);
 	}
@@ -56,15 +39,9 @@ void USAction_Connection::StartAction_Implementation(AActor* Instigator)
 	}
 }
 
-void USAction_Connection::StopAction_Implementation(AActor* Instigator)
-{
-	GetOwningComponent()->SetMainActionDeployed(false);
-	Super::StopAction_Implementation(Instigator);
-}
 
 
-
-void USAction_Connection::TraceInspection_Implementation(AActor* Instigator)
+void USMainAction_Connection::TraceInspection_Implementation(AActor* Instigator)
 {
 	Super::TraceInspection_Implementation(Instigator);
 	//DISPLAY_LOG(TEXT("Succcess To Produce DeployTrace!"));
@@ -79,7 +56,7 @@ void USAction_Connection::TraceInspection_Implementation(AActor* Instigator)
 		GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,
 			ECC_Visibility,QueryParams);
 		
-		if(CShowTrace.GetValueOnAnyThread())
+		if(CShowActionTrace.GetValueOnAnyThread())
 		{
 			const FColor Color=HitResult.bBlockingHit?FColor::Green:FColor::Red;
 			DrawDebugLine(GetWorld(),Start,End,Color,false,0.1f);
@@ -89,7 +66,7 @@ void USAction_Connection::TraceInspection_Implementation(AActor* Instigator)
 		{
 
 			UPrimitiveComponent* Comp=HitResult.GetComponent();
-			if(HitResult.PhysMaterial.Get() == ConnectionMaterial)
+			if(HitResult.PhysMaterial.Get() == DesiredPhysicsMaterial)
 			{
 				int32 CurrentSectionIndex;
 				Comp->GetMaterialFromCollisionFaceIndex(HitResult.FaceIndex,CurrentSectionIndex);
@@ -130,7 +107,7 @@ void USAction_Connection::TraceInspection_Implementation(AActor* Instigator)
 	}
 }
 
-void USAction_Connection::UpdateMaterials(TArray<AStaticMeshActor*> Actors,bool bIsToDeploy)
+void USMainAction_Connection::UpdateMaterials(TArray<AStaticMeshActor*> Actors,bool bIsToDeploy)
 {
 	for(AStaticMeshActor* Actor:Actors)
 	{
@@ -140,7 +117,7 @@ void USAction_Connection::UpdateMaterials(TArray<AStaticMeshActor*> Actors,bool 
 		TArray<UMaterialInterface*> Materials= Comp->GetMaterials();
 		for(int32 MaterialIndex=0;MaterialIndex<TotalNumMaterials;++MaterialIndex)
 		{
-			if(Materials[MaterialIndex]->GetPhysicalMaterial() == ConnectionMaterial)
+			if(Materials[MaterialIndex]->GetPhysicalMaterial() == DesiredPhysicsMaterial)
 			{
 				if(bIsToDeploy)
 				{
@@ -157,7 +134,7 @@ void USAction_Connection::UpdateMaterials(TArray<AStaticMeshActor*> Actors,bool 
 	}
 }
 
-void USAction_Connection::FirstTrace(AActor* Instigator)
+void USMainAction_Connection::FirstTrace(AActor* Instigator)
 {
 	if(ASGameCharacter* Player=Cast<ASGameCharacter>(Instigator))
 	{
@@ -170,7 +147,7 @@ void USAction_Connection::FirstTrace(AActor* Instigator)
 		GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,
 			ECC_Visibility,QueryParams);
 		
-		if(CShowTrace.GetValueOnAnyThread())
+		if(CShowActionTrace.GetValueOnAnyThread())
 		{
 			const FColor Color=HitResult.bBlockingHit?FColor::Green:FColor::Red;
 			DrawDebugLine(GetWorld(),Start,End,Color,false,2.0f);
@@ -182,7 +159,7 @@ void USAction_Connection::FirstTrace(AActor* Instigator)
 			{
 				return;
 			}
-			if(HitResult.PhysMaterial.Get() == ConnectionMaterial)
+			if(HitResult.PhysMaterial.Get() == DesiredPhysicsMaterial)
 			{
 				HitComponent=HitResult.GetComponent();
 				FirstComponent=HitComponent;
@@ -194,7 +171,7 @@ void USAction_Connection::FirstTrace(AActor* Instigator)
 					UGameplayStatics::PlaySoundAtLocation(GetWorld(),CollisionCue,FirstLocation,FRotator::ZeroRotator);
 				}
 		
-				bIsStartSet=true;
+				bIsFirstTraceSet=true;
 				
 				DISPLAY_LOG(FString("First : ").Append(GetNameSafe(this)));
 			}
@@ -202,7 +179,7 @@ void USAction_Connection::FirstTrace(AActor* Instigator)
 	}
 }
 
-void USAction_Connection::SecondTrace(AActor* Instigator)
+void USMainAction_Connection::SecondTrace(AActor* Instigator)
 {
 	if(ASGameCharacter* Player=Cast<ASGameCharacter>(Instigator))
 	{
@@ -215,7 +192,7 @@ void USAction_Connection::SecondTrace(AActor* Instigator)
 		GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,
 			ECC_Visibility,QueryParams);
 		
-		if(CShowTrace.GetValueOnAnyThread())
+		if(CShowActionTrace.GetValueOnAnyThread())
 		{
 			const FColor Color=HitResult.bBlockingHit?FColor::Green:FColor::Red;
 			DrawDebugLine(GetWorld(),Start,End,Color,false,2.0f);
@@ -223,11 +200,11 @@ void USAction_Connection::SecondTrace(AActor* Instigator)
 		if(HitResult.bBlockingHit)
 		{
 
-			if(HitResult.PhysMaterial.Get() == ConnectionMaterial && HitResult.GetComponent() !=HitComponent)
+			if(HitResult.PhysMaterial.Get() == DesiredPhysicsMaterial && HitResult.GetComponent() !=HitComponent)
 			{
 		
 				HitComponent=nullptr;
-				bIsStartSet=false;
+				bIsFirstTraceSet=false;
 				SecondLocation=HitResult.Location;
 				if(ensureMsgf(CollisionCue,TEXT("Your Connection CollisionCue?")))
 				{
@@ -239,7 +216,7 @@ void USAction_Connection::SecondTrace(AActor* Instigator)
 	}
 }
 
-bool USAction_Connection::HasObstacle(AActor* Instigator)
+bool USMainAction_Connection::HasObstacle(AActor* Instigator)
 {
 	if(SecondLocation==FVector::ZeroVector)
 	{
@@ -255,7 +232,7 @@ bool USAction_Connection::HasObstacle(AActor* Instigator)
 		FQuat::Identity,ECC_Visibility,FCollisionShape::MakeSphere(SphereRadius),
 		QueryParams);
 
-	if(CShowTrace.GetValueOnAnyThread())
+	if(CShowActionTrace.GetValueOnAnyThread())
 	{
 		const FColor Color=HitResult.bBlockingHit?FColor::Green:FColor::Red;
 		DrawDebugSphere(GetWorld(),HitResult.Location,SphereRadius,
@@ -276,7 +253,7 @@ bool USAction_Connection::HasObstacle(AActor* Instigator)
 	return true;
 }
 
-bool USAction_Connection::IsValidFace(int32 SectionIndex, UPrimitiveComponent* PrimitiveComp)
+bool USMainAction_Connection::IsValidFace(int32 SectionIndex, UPrimitiveComponent* PrimitiveComp)
 {
 	if(!PrimitiveComp ||
 		SectionIndex == -1 ||
@@ -287,9 +264,9 @@ bool USAction_Connection::IsValidFace(int32 SectionIndex, UPrimitiveComponent* P
 	return true;
 }
 
-void USAction_Connection::InitialVariable()
+void USMainAction_Connection::InitialVariable()
 {
-	bIsStartSet=false;
+	bIsFirstTraceSet=false;
 	HitComponent=nullptr;
 	FirstActor=nullptr;
 	FirstLocation=FVector::ZeroVector;
@@ -300,7 +277,7 @@ void USAction_Connection::InitialVariable()
 	FirstComponent=nullptr;
 }
 
-bool USAction_Connection::IsConnectionClass(const FHitResult& HitResult) const
+bool USMainAction_Connection::IsConnectionClass(const FHitResult& HitResult) const
 {
 	if(HitResult.GetActor()->GetClass() == DefaultConnectionClass)
 	{
@@ -310,7 +287,7 @@ bool USAction_Connection::IsConnectionClass(const FHitResult& HitResult) const
 	return false;
 }
 
-bool USAction_Connection::UpdateSingleMaterial(int32 SectionIndex, UPrimitiveComponent* PrimitiveComp,
+bool USMainAction_Connection::UpdateSingleMaterial(int32 SectionIndex, UPrimitiveComponent* PrimitiveComp,
                                                UMaterialInstance* NewMaterial)
 {
 	if(IsValidFace(SectionIndex,PrimitiveComp))

@@ -6,6 +6,8 @@
 #include "Action/SActionComponent.h"
 #include "SGameMacros.h"
 
+
+
 USActionComponent* USAction::GetOwningComponent() const
 {
 	return Cast<USActionComponent>(GetOuter());
