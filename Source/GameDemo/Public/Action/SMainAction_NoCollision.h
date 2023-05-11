@@ -14,41 +14,27 @@ class GAMEDEMO_API USMainAction_NoCollision : public USMainAction
 	
 protected:
 	
-	UPROPERTY(EditDefaultsOnly,Category="NoCollision")
-	UMaterialInstance* TranslucentMaterial;
 	
 	UPROPERTY(EditDefaultsOnly,Category="NoCollision")
-	FName NewCollisionName;
+	TEnumAsByte<ECollisionChannel> CollisionChannel;
 	
-	UPROPERTY(EditDefaultsOnly,Category="NoCollision")
-	float EffectTime;
-
-	FTimerHandle RecoverTimer;
-
-	FTimerDelegate RecoverDelegate;
-
-	UFUNCTION()
-	void RecoverMaterial(AActor* Instigator);
-
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category="Action")
 	bool IsValidTime() const;
+
+	UFUNCTION()
+	void TimerCallBack();
 	
-	void ClearRecoverTimer();
-	
-	bool UpdateSingleMaterial(UPrimitiveComponent* PrimitiveComp,UMaterialInstance* NewMaterial);
+	bool UpdateSingleMaterial(AActor* SingleActor,UMaterialInstance* NewMaterial);
 
 	bool EliminateCollisionTrace(AActor* Instigator);
+	
 
-	void SetNoCollisionMaterial(UPrimitiveComponent* PrimitiveComp,AActor* Instigator);
-
-
-
-	virtual void InitialVariable() override;
+	
 private:
 
 	UPROPERTY()
-	UPrimitiveComponent* HitComponent;
-
+	AActor* HitActor;
+	
 	bool bIsValidTime = true;
 	
 public:
@@ -59,7 +45,8 @@ public:
 
 	virtual bool ShouldStartMainAction(AActor* Instigator) override;
 
-	virtual void UpdateMaterials(TArray<AStaticMeshActor*> Actors, bool bIsToDeploy) override;
+	UFUNCTION(BlueprintCallable,Category="Action | Material")
+	void UpdateMaterialsByNoCollision(TArray<AActor*> Actors, bool bIsToDeploy);
 };
 
 

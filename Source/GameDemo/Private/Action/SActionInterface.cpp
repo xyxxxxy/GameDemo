@@ -4,7 +4,12 @@
 #include "Action/SActionInterface.h"
 #include "SGameMacros.h"
 
-void ISActionInterface::TraceInspection_Implementation(AActor* Instigator)
+void ISActionInterface::TraceInspection_Implementation(AActor* InstigatorActor)
 {
 	//DISPLAY_LOG(TEXT("Action Trace!"));
+}
+
+void ISActionInterface::ActionInteract_Implementation(AActor* InstigatorActor)
+{
+	DISPLAY_LOG(TEXT("Action Interact!"));
 }

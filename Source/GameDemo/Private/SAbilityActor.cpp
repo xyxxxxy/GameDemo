@@ -16,6 +16,10 @@ void ASAbilityActor::Interact_Implementation(APawn* InstigatorActor)
 		(InstigatorActor->GetComponentByClass(USActionComponent::StaticClass())))
 	{
 		DISPLAY_LOG(TEXT("Check Action Component!"));
+		if(ActionComp->GetMainAction() && ActionComp->GetMainAction()->IsRunning())
+		{
+			ActionComp->GetMainAction()->StopAction_Implementation(InstigatorActor);
+		}
 		if(ensureMsgf(NewAction,TEXT("Where is your action??")))
 		{
 			ActionComp->AddAction(InstigatorActor,NewAction);

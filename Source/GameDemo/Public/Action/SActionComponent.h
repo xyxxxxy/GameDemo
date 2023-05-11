@@ -80,13 +80,22 @@ public:
 
 	UFUNCTION(BlueprintCallable,Category="Action")
 	bool IsMainActionDeployed() const;
-
+	
+	UFUNCTION(BlueprintCallable,Category="Action")
+	bool ShouldStartDeploy(AActor* Instigator);
+	
 	UFUNCTION()
 	void SetMainActionDeployed(bool NewState);
+
+	USAction* GetMainAction() const;
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	bool HaveMainAction() const;
+
+	void BindMainActionDeploy();
+
+	void UnbindMainActionDeploy();
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnActionStateChanged OnActionStarted;

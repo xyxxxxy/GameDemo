@@ -126,8 +126,11 @@ void ASGameCharacter::MainActionDeploy()
 		}
 		else
 		{
-			DISPLAY_LOG(TEXT("2"));
-			ActionComp->SetMainActionDeployed(true);
+			if(ActionComp->ShouldStartDeploy(this))
+			{
+				DISPLAY_LOG(TEXT("2"));
+				ActionComp->SetMainActionDeployed(true);
+			}
 		}
 
 	}

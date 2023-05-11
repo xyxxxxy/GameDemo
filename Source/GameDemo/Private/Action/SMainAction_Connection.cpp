@@ -41,11 +41,11 @@ void USMainAction_Connection::StartAction_Implementation(AActor* Instigator)
 
 
 
-void USMainAction_Connection::TraceInspection_Implementation(AActor* Instigator)
+void USMainAction_Connection::TraceInspection_Implementation(AActor* InstigatorActor)
 {
-	Super::TraceInspection_Implementation(Instigator);
+	Super::TraceInspection_Implementation(InstigatorActor);
 	//DISPLAY_LOG(TEXT("Succcess To Produce DeployTrace!"));
-	if(ASGameCharacter* Player=Cast<ASGameCharacter>(Instigator))
+	if(ASGameCharacter* Player=Cast<ASGameCharacter>(InstigatorActor))
 	{
 		FVector Start =Player->GetFollowCamera()->GetComponentLocation();
 		FVector End = Start+Player->GetFollowCamera()->GetForwardVector() * TraceDistance;

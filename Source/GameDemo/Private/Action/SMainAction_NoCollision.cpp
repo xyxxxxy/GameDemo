@@ -6,50 +6,39 @@
 #include "DrawDebugHelpers.h"
 #include "SGameCharacter.h"
 #include "SGameMacros.h"
-#include "Engine/StaticMeshActor.h"
+#include "SNoCollisionActor.h"
 
-
-void USMainAction_NoCollision::RecoverMaterial(AActor* Instigator)
-{
-	bIsValidTime=true;
-	if(GetOwningComponent()->IsMainActionDeployed())
-	{
-		GetOwningComponent()->OnMainActionStartDeployed.Broadcast(GetOwningComponent(),Instigator);
-		DISPLAY_LOG(TEXT("recover to deploy material!"));
-	}
-	else
-	{
-		UpdateSingleMaterial(HitComponent,nullptr);
-	}
-	HitComponent->SetCollisionProfileName("BlockAll");
-	HitComponent=nullptr;
-	ClearRecoverTimer();
-}
 
 bool USMainAction_NoCollision::IsValidTime() const
 {
 	return bIsValidTime;
 }
 
-void USMainAction_NoCollision::ClearRecoverTimer()
+void USMainAction_NoCollision::TimerCallBack()
 {
-	DISPLAY_LOG(TEXT("Clear TimerHandle!"));
-	GetWorld()->GetTimerManager().ClearTimer(RecoverTimer);
+	bIsValidTime=true;
+	HitActor=nullptr;
 }
 
-bool USMainAction_NoCollision::UpdateSingleMaterial(UPrimitiveComponent* PrimitiveComp, UMaterialInstance* NewMaterial)
+
+
+bool USMainAction_NoCollision::UpdateSingleMaterial(AActor* SingleActor, UMaterialInstance* NewMaterial)
 {
-	if(!PrimitiveComp)
+	if(!SingleActor)
 	{
 		return false;
 	}
-	int32 TotalNumMaterial=PrimitiveComp->GetNumMaterials();
-	for(int32 i=0;i<TotalNumMaterial;++i)
+	if(	UStaticMeshComponent* Comp=Cast<UStaticMeshComponent>
+	(SingleActor->GetComponentByClass(UStaticMeshComponent::StaticClass())))
 	{
-		PrimitiveComp->SetMaterial(i,NewMaterial);
+		int32 MaterialNum=Comp->GetNumMaterials();
+		for(int32 i=0;i<MaterialNum;++i)
+		{
+			Comp->SetMaterial(i,NewMaterial);
+		}
+		return true;
 	}
-	
-	return true;
+	return false;
 	
 }
 
@@ -60,39 +49,26 @@ bool USMainAction_NoCollision::EliminateCollisionTrace(AActor* Instigator)
 		FVector Start =Player->GetFollowCamera()->GetComponentLocation();
 		FVector End = Start+Player->GetFollowCamera()->GetForwardVector() * TraceDistance;
 		FHitResult HitResult;
-		FCollisionQueryParams QueryParams;
-		QueryParams.bReturnPhysicalMaterial=true;
-		GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,
-			ECC_Visibility,QueryParams);
-		if(!HitResult.bBlockingHit &&
-			(HitResult.bBlockingHit && !HitResult.GetComponent()->ComponentHasTag(AbilityTag)))
+		
+		GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,CollisionChannel);
+		
+		if(!HitResult.bBlockingHit ||
+			(HitResult.bBlockingHit && !HitResult.GetActor()->ActorHasTag(AbilityTag)))
 		{
 			return false;
 		}
-		UPrimitiveComponent* Comp=HitResult.GetComponent();
-		if(Comp == HitComponent)
+		AActor* Actor=HitResult.GetActor();
+		if(Actor == HitActor)
 		{
 			return true;
 		}
-		HitComponent=HitResult.GetComponent();
+		HitActor=HitResult.GetActor();
 		return true;
 	}
 	return false;
 }
-	
-	
 
 
-void USMainAction_NoCollision::SetNoCollisionMaterial(UPrimitiveComponent* PrimitiveComp,AActor* Instigator)
-{
-	UpdateSingleMaterial(PrimitiveComp,TranslucentMaterial);
-	PrimitiveComp->SetCollisionProfileName(NewCollisionName);
-}
-
-void USMainAction_NoCollision::InitialVariable()
-{
-	//HitComponent=nullptr;
-}
 
 
 
@@ -107,10 +83,16 @@ void USMainAction_NoCollision::StartAction_Implementation(AActor* Instigator)
 	if(EliminateCollisionTrace(Instigator))
 	{
 		bIsValidTime=false;
-		RecoverDelegate.BindUFunction(this,"RecoverMaterial",Instigator);
-		GetWorld()->GetTimerManager().SetTimer(RecoverTimer,RecoverDelegate,EffectTime,false);
+		if(HitActor->Implements<USActionInterface>())
+		{
+			if(ASNoCollisionActor* Actor=Cast<ASNoCollisionActor>(HitActor))
+			{
+				Actor->OnEffectEnd.AddDynamic(this,&USMainAction_NoCollision::TimerCallBack);
+				Execute_ActionInteract(HitActor,Instigator);
+			}
+		}
 		StopAction_Implementation(Instigator);
-		SetNoCollisionMaterial(HitComponent,Instigator);
+
 	}
 	else
 	{
@@ -119,23 +101,21 @@ void USMainAction_NoCollision::StartAction_Implementation(AActor* Instigator)
 }
 
 
-
-void USMainAction_NoCollision::TraceInspection_Implementation(AActor* Instigator)
+void USMainAction_NoCollision::TraceInspection_Implementation(AActor* InstigatorActor)
 {
-	Super::TraceInspection_Implementation(Instigator);
+	Super::TraceInspection_Implementation(InstigatorActor);
 	if(!IsValidTime())
 	{
 		return;
 	}
-	if(ASGameCharacter* Player=Cast<ASGameCharacter>(Instigator))
+	if(ASGameCharacter* Player=Cast<ASGameCharacter>(InstigatorActor))
 	{
 		FVector Start =Player->GetFollowCamera()->GetComponentLocation();
 		FVector End = Start+Player->GetFollowCamera()->GetForwardVector() * TraceDistance;
 		FHitResult HitResult;
-		FCollisionQueryParams QueryParams;
-		QueryParams.bReturnPhysicalMaterial=true;
-		GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,
-			ECC_Visibility,QueryParams);
+		
+		GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,CollisionChannel);
+		
 		if(CShowActionTrace.GetValueOnAnyThread())
 		{
 			const FColor Color=HitResult.bBlockingHit?FColor::Green:FColor::Red;
@@ -143,21 +123,21 @@ void USMainAction_NoCollision::TraceInspection_Implementation(AActor* Instigator
 		}
 		
 		if(!HitResult.bBlockingHit ||
-			(HitResult.bBlockingHit && !HitResult.GetComponent()->ComponentHasTag(AbilityTag)))
+			(HitResult.bBlockingHit && !HitResult.GetActor()->ActorHasTag(AbilityTag)))
 		{
-			UpdateSingleMaterial(HitComponent,DeployedMaterial);
-			HitComponent=nullptr;
+			UpdateSingleMaterial(HitActor,DeployedMaterial);
+			HitActor=nullptr;
 			return;
 		}
-		UPrimitiveComponent* Comp=HitResult.GetComponent();
-
-		if(Comp == HitComponent)
+		
+		AActor* Actor=HitResult.GetActor();
+		if(Actor == HitActor)
 		{
 			return;
 		}
-		UpdateSingleMaterial(HitComponent,DeployedMaterial);
-		UpdateSingleMaterial(Comp,SelectedMaterial);
-		HitComponent=Comp;
+		UpdateSingleMaterial(HitActor,DeployedMaterial);
+		UpdateSingleMaterial(Actor,SelectedMaterial);
+		HitActor=Actor;
 		
 	}
 }
@@ -167,27 +147,28 @@ bool USMainAction_NoCollision::ShouldStartMainAction(AActor* Instigator)
 	return IsValidTime();
 }
 
-void USMainAction_NoCollision::UpdateMaterials(TArray<AStaticMeshActor*> Actors, bool bIsToDeploy)
+void USMainAction_NoCollision::UpdateMaterialsByNoCollision(TArray<AActor*> Actors, bool bIsToDeploy)
 {
-	for(AStaticMeshActor* Actor:Actors)
+	
+	for(AActor* Actor:Actors)
 	{
-		
-		UStaticMeshComponent* Comp=Actor->GetStaticMeshComponent();
-		int32 TotalNumMaterials= Comp->GetNumMaterials();
-		TArray<UMaterialInterface*> Materials= Comp->GetMaterials();
-		for(int32 MaterialIndex=0;MaterialIndex<TotalNumMaterials;++MaterialIndex)
+		if(UStaticMeshComponent* Comp=Cast<UStaticMeshComponent>
+	(Actor->GetComponentByClass(UStaticMeshComponent::StaticClass())))
 		{
+			int32 MaterialNum= Comp->GetNumMaterials();
+			TArray<UMaterialInterface*> Materials= Comp->GetMaterials();
+			for(int32 i=0;i<MaterialNum;++i)
+			{
 				if(bIsToDeploy)
 				{
-					Comp->SetMaterial(MaterialIndex,DeployedMaterial);
+					Comp->SetMaterial(i,DeployedMaterial);
 				}
 				else
 				{
-					Comp->SetMaterial(MaterialIndex,nullptr);
+					Comp->SetMaterial(i,nullptr);
 				}
-
 				DISPLAY_LOG(TEXT("Materials has set!"));
-			
+			}
 		}
 	}
 }

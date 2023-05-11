@@ -18,7 +18,12 @@ class GAMEDEMO_API ISActionInterface
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent,Category="Action")
-	void TraceInspection(AActor* Instigator);
-	virtual void TraceInspection_Implementation(AActor* Instigator);
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Action")
+	void TraceInspection(AActor* InstigatorActor);
+	virtual void TraceInspection_Implementation(AActor* InstigatorActor);
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Action")
+	void ActionInteract(AActor* InstigatorActor);
+	virtual void ActionInteract_Implementation(AActor* InstigatorActor);
+	
 };
