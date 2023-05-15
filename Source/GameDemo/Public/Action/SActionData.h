@@ -23,14 +23,22 @@ struct GAMEDEMO_API FSActionProperty: public FTableRowBase
 {
 	GENERATED_BODY()
 
-	FSActionProperty():Category(EActionCategory::NormalAction),ActionNiagara(nullptr)
-	{}
+	FSActionProperty():
+	Category(EActionCategory::NormalAction),
+	ActionIcon(nullptr),
+	ActionNiagara(nullptr)
+	{
+		ActionBrush.SetImageSize(FVector2D(256.0f,256.0f));
+	}
 	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Action")
 	FName ActionName;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Action")
 	TEnumAsByte<EActionCategory::Type> Category;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Action")
+	UTexture2D* ActionIcon;
 	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Action")
 	FSlateBrush ActionBrush;

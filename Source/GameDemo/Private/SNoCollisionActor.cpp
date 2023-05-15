@@ -19,6 +19,7 @@ void ASNoCollisionActor::RecoverMaterial(AActor* InstigatorActor)
 		else
 		{
 			UpdateMaterial(nullptr);
+			bIsTranslucent=false;
 		}
 	}
 	if(StaticMeshComp)
@@ -32,9 +33,9 @@ void ASNoCollisionActor::RecoverMaterial(AActor* InstigatorActor)
 
 void ASNoCollisionActor::SetNoCollisionMaterial()
 {
+	bIsTranslucent=true;
 	UpdateMaterial(TranslucentMaterial);
-
-	StaticMeshComp->SetCollisionProfileName(NewCollisionName);
+	StaticMeshComp->SetCollisionProfileName(TranslucentCollisionName);
 	
 }
 
@@ -72,7 +73,8 @@ ASNoCollisionActor::ASNoCollisionActor()
 	StaticMeshComp->SetCollisionProfileName("SetNoCollision");
 	Tags={"NoCollision"};
 	EffectTime=5.0f;
-	NewCollisionName="OverlapAll";
+	TranslucentCollisionName="OverlapAll";
+	bIsTranslucent=false;
 }
 
 void ASNoCollisionActor::ActionInteract_Implementation(AActor* InstigatorActor)
@@ -85,6 +87,11 @@ void ASNoCollisionActor::ActionInteract_Implementation(AActor* InstigatorActor)
 
 	GetWorld()->GetTimerManager().SetTimer(EffectTimer,EffectDelegate,EffectTime,false);
 	
+}
+
+bool ASNoCollisionActor::IsTranslucent() const
+{
+	return bIsTranslucent;
 }
 
 

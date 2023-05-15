@@ -2,5 +2,10 @@
 
 
 #include "SGameMode.h"
+#include "SGamePlayerState.h"
 
 
+ASGameMode::ASGameMode()
+{
+	PlayerStateClass = ASGamePlayerState::StaticClass();
+}

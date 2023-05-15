@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-
 #include "SGameCharacter.generated.h"
 
+class UPostProcessComponent;
 class USActionComponent;
 class USInteractComponent;
 UCLASS()
@@ -38,6 +38,9 @@ protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="SkillComponent")
 	USActionComponent* ActionComp;
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="PostProcess")
+	UPostProcessComponent* PostProcessComp;
+
 	
 	// Move
 	void MoveForward(float value);
@@ -58,6 +61,8 @@ protected:
 	void MainActionDeploy();
 	
 	void Action();
+
+	void SetPostProcess(bool NewState);
 public:	
 	
 	

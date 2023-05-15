@@ -27,6 +27,12 @@ protected:
 	UPROPERTY(EditAnywhere,Category="Connection")
 	TSubclassOf<AActor> DefaultConnectionClass;
 
+	UPROPERTY(EditAnywhere,Category="Connection")
+	TEnumAsByte<ECollisionChannel> NoCollisionChannel;
+
+	UPROPERTY(EditAnywhere,Category="Connection")
+	float TraceMagnification =1.0f;
+
 	UPROPERTY(EditAnywhere,Category="Sound")
 	USoundBase* CollisionCue;
 	
@@ -54,6 +60,8 @@ protected:
 	virtual  void InitialVariable() override;
 
 	bool IsConnectionClass(const FHitResult& HitResult) const;
+
+	void ProbeNoCollision(AActor* InstigatorActor);
 	
 private:
 
@@ -62,6 +70,8 @@ private:
 	int32 PreSectionIndex = -1;
 
 	int32 FirstSectionIndex = -1;
+
+	float CurrentTraceDistance;
 	
 	UPROPERTY()
 	UPrimitiveComponent*  HitComponent;
@@ -72,8 +82,6 @@ private:
 	UPROPERTY()
 	UPrimitiveComponent*  TraceComponent;
 	
-
-
 	UPROPERTY()
 	UPrimitiveComponent* FirstComponent;
 

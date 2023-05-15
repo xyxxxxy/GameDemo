@@ -41,6 +41,8 @@ public:
 
 	virtual void StopAction_Implementation(AActor* Instigator) override;
 
+	virtual void K2_StartDeploy_Implementation(USActionComponent* OwningComp, AActor* Instigator) override;
+	
 	virtual bool ShouldStartMainAction(AActor* Instigator);
 
 	UFUNCTION(BlueprintCallable,Category="Action | Material")

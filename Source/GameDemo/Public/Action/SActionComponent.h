@@ -8,7 +8,6 @@
 #include "Components/ActorComponent.h"
 #include "SActionComponent.generated.h"
 
-
 class USAction;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionStateChanged,
@@ -19,10 +18,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionDeployChanged,
 	class USActionComponent*,OwningComp,
 	AActor*, Instigator);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnActionSwitch,
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionSwitched,
 	USAction*, OldAction,
-	USAction* ,NewAction,
-	AActor*, Instigator);
+	USAction* ,NewAction);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMainActionAcquired,
+	class USActionComponent*,OwningComp,
+	USAction*, Action);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAMEDEMO_API USActionComponent : public UActorComponent
@@ -53,6 +55,9 @@ protected:
 
 	UPROPERTY()
 	USAction* CurrentMainAction;
+
+	UPROPERTY()
+	TArray<USAction*> MainActions;
 	
 	virtual void BeginPlay() override;
 
@@ -83,6 +88,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable,Category="Action")
 	bool ShouldStartDeploy(AActor* Instigator);
+
+	UFUNCTION(BlueprintCallable,Category="Action")
+	TArray<USAction*> GetMainActions() const;
 	
 	UFUNCTION()
 	void SetMainActionDeployed(bool NewState);
@@ -110,5 +118,10 @@ public:
 	FOnActionDeployChanged OnMainActionEndDeployed;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnActionSwitch OnActionSwitch;
+	FOnActionSwitched OnActionSwitched;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnMainActionAcquired OnMainActionAcquired;
 };
+
+

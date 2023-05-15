@@ -3,6 +3,7 @@
 
 #include "Action/SActionComponent.h"
 #include "SGameMacros.h"
+#include "SGamePlayerState.h"
 #include "Action/SMainAction.h"
 
 
@@ -29,10 +30,7 @@ void USActionComponent::BeginPlay()
 		AddAction(GetOwner(),ActionClass);
 	}
 	DISPLAY_LOG(TEXT("Begin!"));
-	// if(DefaultMainActions.Num()>0)
-	// {
-	// 	CurrentMainAction=Actions[DefaultActions.Num()];
-	// }
+
 }
 
 void USActionComponent::ActionTraceCheck()
@@ -63,9 +61,14 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 		if(NewAction->GetActionCategory() == EActionCategory::MainAction)
 		{
 			DISPLAY_LOG(TEXT("Rectify MainAction!"));
+			MainActions.Add(NewAction);
+
+			// ActionAcquired
+			OnMainActionAcquired.Broadcast(this,NewAction);
+			
 			if(!CurrentMainAction)
 			{
-				CurrentMainAction=NewAction;
+				CurrentMainAction = NewAction;
 				BindMainActionDeploy();
 			}
 			SwitchMainAction(Instigator,ActionClass);
@@ -140,7 +143,7 @@ void USActionComponent::SwitchMainAction(AActor* Instigator, TSubclassOf<USActio
 		{
 			DISPLAY_LOG(TEXT("Success to Switch!"));
 			UnbindMainActionDeploy();
-			OnActionSwitch.Broadcast(CurrentMainAction,Action,Instigator);
+			OnActionSwitched.Broadcast(CurrentMainAction,Action);
 			CurrentMainAction = Action;
 			BindMainActionDeploy();
 		}
@@ -163,6 +166,11 @@ bool USActionComponent::ShouldStartDeploy(AActor* Instigator)
 		}
 	}
 	return false;
+}
+
+TArray<USAction*> USActionComponent::GetMainActions() const
+{
+	return MainActions;
 }
 
 void USActionComponent::SetMainActionDeployed(bool NewState)

@@ -7,6 +7,7 @@
 #include "SGameCharacter.h"
 #include "Action/SActionComponent.h"
 #include "SGameMacros.h"
+#include "SNoCollisionActor.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/StaticMeshActor.h"
 #include "Kismet/GameplayStatics.h"
@@ -44,11 +45,13 @@ void USMainAction_Connection::StartAction_Implementation(AActor* Instigator)
 void USMainAction_Connection::TraceInspection_Implementation(AActor* InstigatorActor)
 {
 	Super::TraceInspection_Implementation(InstigatorActor);
-	//DISPLAY_LOG(TEXT("Succcess To Produce DeployTrace!"));
+
+	ProbeNoCollision(InstigatorActor);
+	
 	if(ASGameCharacter* Player=Cast<ASGameCharacter>(InstigatorActor))
 	{
 		FVector Start =Player->GetFollowCamera()->GetComponentLocation();
-		FVector End = Start+Player->GetFollowCamera()->GetForwardVector() * TraceDistance;
+		FVector End = Start+Player->GetFollowCamera()->GetForwardVector() * CurrentTraceDistance;
 		FHitResult HitResult;
 		FCollisionQueryParams QueryParams;
 		QueryParams.bTraceComplex=true;
@@ -139,7 +142,7 @@ void USMainAction_Connection::FirstTrace(AActor* Instigator)
 	if(ASGameCharacter* Player=Cast<ASGameCharacter>(Instigator))
 	{
 		FVector Start =Player->GetFollowCamera()->GetComponentLocation();
-		FVector End = Start+Player->GetFollowCamera()->GetForwardVector() * TraceDistance;
+		FVector End = Start+Player->GetFollowCamera()->GetForwardVector() * CurrentTraceDistance;
 		FHitResult HitResult;
 		FCollisionQueryParams QueryParams;
 		QueryParams.bTraceComplex=true;
@@ -184,7 +187,7 @@ void USMainAction_Connection::SecondTrace(AActor* Instigator)
 	if(ASGameCharacter* Player=Cast<ASGameCharacter>(Instigator))
 	{
 		FVector Start =Player->GetFollowCamera()->GetComponentLocation();
-		FVector End = Start+Player->GetFollowCamera()->GetForwardVector() * TraceDistance;
+		FVector End = Start+Player->GetFollowCamera()->GetForwardVector() * CurrentTraceDistance;
 		FHitResult HitResult;
 		FCollisionQueryParams QueryParams;
 		QueryParams.bTraceComplex=true;
@@ -287,8 +290,37 @@ bool USMainAction_Connection::IsConnectionClass(const FHitResult& HitResult) con
 	return false;
 }
 
+void USMainAction_Connection::ProbeNoCollision(AActor* InstigatorActor)
+{
+	if(ASGameCharacter* Player=Cast<ASGameCharacter>(InstigatorActor))
+	{
+		FVector Start =Player->GetFollowCamera()->GetComponentLocation();
+		FVector End = Start+Player->GetFollowCamera()->GetForwardVector() * TraceDistance;
+		FHitResult HitResult;
+		
+		GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,NoCollisionChannel);
+		if(!HitResult.bBlockingHit)
+		{
+			CurrentTraceDistance=TraceDistance;
+			return;
+		}
+		if(ASNoCollisionActor* Actor=Cast<ASNoCollisionActor>(HitResult.GetActor()))
+		{
+			if(Actor->IsTranslucent())
+			{
+				CurrentTraceDistance=TraceDistance*TraceMagnification;
+			}
+			else
+			{
+				CurrentTraceDistance=TraceDistance;
+			}
+		}
+	}
+	CurrentTraceDistance=TraceDistance;
+}
+
 bool USMainAction_Connection::UpdateSingleMaterial(int32 SectionIndex, UPrimitiveComponent* PrimitiveComp,
-                                               UMaterialInstance* NewMaterial)
+                                                   UMaterialInstance* NewMaterial)
 {
 	if(IsValidFace(SectionIndex,PrimitiveComp))
 	{

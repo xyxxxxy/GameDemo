@@ -29,7 +29,7 @@ protected:
 	UMaterialInstance* TranslucentMaterial;
 
 	UPROPERTY(EditDefaultsOnly,Category="NoCollision")
-	FName NewCollisionName;
+	FName TranslucentCollisionName;
 
 	FTimerHandle EffectTimer;
 
@@ -43,7 +43,11 @@ protected:
 	bool UpdateMaterial(UMaterialInstance* NewMaterial);
 
 	void ClearTimer();
+	
+private:
 
+	bool bIsTranslucent;
+	
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnEffectEnd OnEffectEnd;
@@ -51,5 +55,7 @@ public:
 	ASNoCollisionActor();
 
 	virtual void ActionInteract_Implementation(AActor* InstigatorActor) override;
+
+	bool IsTranslucent() const;
 	
 };

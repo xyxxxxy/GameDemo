@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "SGameMacros.h"
+#include "Components/PostProcessComponent.h"
 
 ASGameCharacter::ASGameCharacter()
 {
@@ -37,6 +38,11 @@ ASGameCharacter::ASGameCharacter()
 
 	ActionComp=CreateDefaultSubobject<USActionComponent>(TEXT("ActionComp"));
 
+	PostProcessComp=CreateDefaultSubobject<UPostProcessComponent>(TEXT("PostProcessComp"));
+	PostProcessComp->SetupAttachment(RootComponent);
+
+	PostProcessComp->bEnabled=false;
+	
 }
 
 
@@ -141,5 +147,13 @@ void ASGameCharacter::Action()
 	if(ActionComp && ActionComp->HaveMainAction() && ActionComp->IsMainActionDeployed())
 	{
 		ActionComp->StartActionByName(this,"MainAction");
+	}
+}
+
+void ASGameCharacter::SetPostProcess(bool NewState)
+{
+	if(PostProcessComp->bEnabled != NewState)
+	{
+		PostProcessComp->bEnabled=NewState;
 	}
 }

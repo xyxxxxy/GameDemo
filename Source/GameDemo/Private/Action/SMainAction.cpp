@@ -4,6 +4,7 @@
 #include "Action/SMainAction.h"
 #include "SGameMacros.h"
 #include "Action/SActionComponent.h"
+#include "Components/PostProcessComponent.h"
 
 bool USMainAction::CanStart_Implementation(AActor* Instigator)
 {
@@ -26,8 +27,25 @@ void USMainAction::StartAction_Implementation(AActor* Instigator)
 void USMainAction::StopAction_Implementation(AActor* Instigator)
 {
 	GetOwningComponent()->SetMainActionDeployed(false);
+	if(UPostProcessComponent* Comp=Cast<UPostProcessComponent>
+  (Instigator->GetComponentByClass(UPostProcessComponent::StaticClass())))
+	{
+		Comp->bEnabled=false;
+	}
 	Super::StopAction_Implementation(Instigator);
 }
+
+void USMainAction::K2_StartDeploy_Implementation(USActionComponent* OwningComp, AActor* Instigator)
+{
+	Super::K2_StartDeploy_Implementation(OwningComp, Instigator);
+
+	if(UPostProcessComponent* Comp=Cast<UPostProcessComponent>
+		(Instigator->GetComponentByClass(UPostProcessComponent::StaticClass())))
+	{
+		Comp->bEnabled=true;
+	}
+}
+
 
 bool USMainAction::ShouldStartMainAction(AActor* Instigator)
 {
