@@ -7,9 +7,8 @@
 #include "Blueprint/UserWidget.h"
 #include "SWidget_Action.generated.h"
 
-
 class USAction;
-class USizeBox;
+
 UCLASS(Blueprintable)
 class GAMEDEMO_API USWidget_Action : public UUserWidget
 {
