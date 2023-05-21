@@ -16,14 +16,14 @@ class GAMEDEMO_API UGameBlueprintFunctionLibrary : public UBlueprintFunctionLibr
 
 public:
 	
-	UFUNCTION(BlueprintCallable,Category="GameLibrary | Player")
-	static ASGameCharacter* GetPlayer();
+	UFUNCTION(BlueprintCallable,Category="GameLibrary | Player",meta=(WorldContext = "WorldContextObject"))
+	static ASGameCharacter* GetPlayer(const UObject* WorldContextObject);
 	
-	UFUNCTION(BlueprintCallable,Category="GameLibrary | Player")
-	static void ControlPlayerInput(bool bIsEnabled);
+	UFUNCTION(BlueprintCallable,Category="GameLibrary | Player",meta=(WorldContext = "WorldContextObject"))
+	static void ControlPlayerInput(const UObject* WorldContextObject,bool bIsEnabled);
 
 	UFUNCTION(BlueprintCallable,Category="GameLibrary | Item")
-	static void FindItemInDataTable( FSItem item,bool& bIsFound,FSItemCategory& Property);
+	static void FindItemInDataTable( FSItem item,bool& bIsFound,FSItemProperty& Property);
 
 	UFUNCTION(BlueprintCallable,Category="GameLibrary | Action")
 	static void FindActionInDataTable( FName Name,bool& bIsFound,FSActionProperty& Property);

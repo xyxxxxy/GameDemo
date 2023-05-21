@@ -8,9 +8,9 @@
 #include "Kismet/GameplayStatics.h"
 
 // player
-ASGameCharacter* UGameBlueprintFunctionLibrary::GetPlayer()
+ASGameCharacter* UGameBlueprintFunctionLibrary::GetPlayer(const UObject* WorldContextObject)
 {
-	if(ASGameCharacter* player=Cast<ASGameCharacter>(UGameplayStatics::GetPlayerPawn(nullptr,0)))
+	if(ASGameCharacter* player=Cast<ASGameCharacter>(UGameplayStatics::GetPlayerCharacter(WorldContextObject,0)))
 	{
 		return player;
 	}
@@ -18,26 +18,27 @@ ASGameCharacter* UGameBlueprintFunctionLibrary::GetPlayer()
 	return  nullptr;
 }
 
-void UGameBlueprintFunctionLibrary::ControlPlayerInput(bool bIsEnabled)
+void UGameBlueprintFunctionLibrary::ControlPlayerInput(const UObject* WorldContextObject,bool bIsEnabled)
 {
-	ASGameCharacter* player=GetPlayer();
-	if(!player)
+	
+	ACharacter* Player =  UGameplayStatics::GetPlayerCharacter(WorldContextObject,0);
+	if(!Player)
 	{
 		return;
 	}
 	if(bIsEnabled)
 	{
-		player->EnableInput(UGameplayStatics::GetPlayerController(nullptr,0));
+		Player->EnableInput(UGameplayStatics::GetPlayerController(WorldContextObject,0));
 	}
 	else
 	{
-		player->DisableInput(UGameplayStatics::GetPlayerController(nullptr,0));
+		Player->DisableInput(UGameplayStatics::GetPlayerController(WorldContextObject,0));
 	}
 	
 }
 
 //item
-void UGameBlueprintFunctionLibrary::FindItemInDataTable(FSItem item, bool& bIsFound,FSItemCategory& category)
+void UGameBlueprintFunctionLibrary::FindItemInDataTable(FSItem item, bool& bIsFound,FSItemProperty& category)
 {
 	const UDataTable* DataTablePtr=LoadObject<UDataTable>
 	(nullptr,UTF8_TO_TCHAR("DataTable'/Game/Data/ItemCategoryDataTable.ItemCategoryDataTable'"));
@@ -48,7 +49,7 @@ void UGameBlueprintFunctionLibrary::FindItemInDataTable(FSItem item, bool& bIsFo
 	{
 		if(ID == RowName)
 		{
-			if(const FSItemCategory* RowPtr = DataTablePtr->FindRow<FSItemCategory>(RowName,ContextString))
+			if(const FSItemProperty* RowPtr = DataTablePtr->FindRow<FSItemProperty>(RowName,ContextString))
 			{
 				DISPLAY_SCREEN(TEXT("Success to load item category!"));
 				category=*RowPtr;

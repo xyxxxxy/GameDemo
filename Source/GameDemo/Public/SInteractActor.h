@@ -24,6 +24,10 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Item")
 	FSItem Item;
 
+	virtual void OpenCustomDepth_Implementation() override;
+
+	virtual void CloseCustomDepth_Implementation() override;
+
 	virtual void GetCategory_Implementation(FName& Name) override;
 
 	
@@ -44,3 +48,17 @@ protected:
 	void ActorGetCategory(FName& CategoryName);
 	
 };
+
+inline void ASInteractActor::CloseCustomDepth_Implementation()
+{
+	ISInteractInterface::CloseCustomDepth_Implementation();
+
+	InteractComp->SetRenderCustomDepth(false);
+}
+
+inline void ASInteractActor::OpenCustomDepth_Implementation()
+{
+	ISInteractInterface::OpenCustomDepth_Implementation();
+
+	InteractComp->SetRenderCustomDepth(true);
+}

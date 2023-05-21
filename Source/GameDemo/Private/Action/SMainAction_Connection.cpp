@@ -114,7 +114,6 @@ void USMainAction_Connection::UpdateMaterials(TArray<AStaticMeshActor*> Actors,b
 {
 	for(AStaticMeshActor* Actor:Actors)
 	{
-		
 		UStaticMeshComponent* Comp=Actor->GetStaticMeshComponent();
 		int32 TotalNumMaterials= Comp->GetNumMaterials();
 		TArray<UMaterialInterface*> Materials= Comp->GetMaterials();
@@ -124,10 +123,12 @@ void USMainAction_Connection::UpdateMaterials(TArray<AStaticMeshActor*> Actors,b
 			{
 				if(bIsToDeploy)
 				{
+					DISPLAY_LOG(TEXT("Deploy Mat"));
 					Comp->SetMaterial(MaterialIndex,DeployedMaterial);
 				}
 				else
 				{
+					DISPLAY_LOG(TEXT("Normal Mat"));
 					Comp->SetMaterial(MaterialIndex,NormalMaterial);
 				}
 

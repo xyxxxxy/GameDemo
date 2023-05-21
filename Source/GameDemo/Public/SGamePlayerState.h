@@ -58,7 +58,10 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Action")
 	void SetActionProperties(const TMap<FName,FSActionProperty>& NewActionProperties);
 
-	UFUNCTION(BlueprintCallable,Category="Action")
+	UFUNCTION(BlueprintCallable,BlueprintPure,Category="Action")
+	const TMap<FName,FSActionProperty>& GetActionProperties();
+
+	UFUNCTION(BlueprintCallable,BlueprintPure,Category="Action")
 	FSActionProperty GetActionProperty(FName ActionName);
 
 	UFUNCTION(BlueprintCallable,Category="Action")

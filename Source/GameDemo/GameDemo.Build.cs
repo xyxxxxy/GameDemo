@@ -9,9 +9,11 @@ public class GameDemo : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine",
-			"InputCore","GameplayTags","PhysicsCore","Niagara","SlateCore" });
+			"InputCore","GameplayTags","PhysicsCore","Niagara","SlateCore"});
+		
+		PublicDependencyModuleNames.AddRange(new string[]{"AutomaticRadialMenus"});
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

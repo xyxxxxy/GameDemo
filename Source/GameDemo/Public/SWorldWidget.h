@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SUIManagerInterface.h"
 #include "Blueprint/UserWidget.h"
 #include "SWorldWidget.generated.h"
 
 
 class USizeBox;
 UCLASS(Blueprintable)
-class GAMEDEMO_API USWorldWidget : public UUserWidget
+class GAMEDEMO_API USWorldWidget : public UUserWidget,public ISUIManagerInterface
 {
 	GENERATED_BODY()
 

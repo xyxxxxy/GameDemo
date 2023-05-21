@@ -150,10 +150,4 @@ void ASGameCharacter::Action()
 	}
 }
 
-void ASGameCharacter::SetPostProcess(bool NewState)
-{
-	if(PostProcessComp->bEnabled != NewState)
-	{
-		PostProcessComp->bEnabled=NewState;
-	}
-}
+

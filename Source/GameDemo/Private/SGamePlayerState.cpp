@@ -74,6 +74,11 @@ void ASGamePlayerState::SetActionProperties(const TMap<FName, FSActionProperty>&
 	ActionProperties = NewActionProperties;
 }
 
+const TMap<FName, FSActionProperty>& ASGamePlayerState::GetActionProperties()
+{
+	return ActionProperties;
+}
+
 FSActionProperty ASGamePlayerState::GetActionProperty(FName ActionName)
 {
 	if(FSActionProperty* NewActionProperty = ActionProperties.Find(ActionName))

@@ -62,7 +62,6 @@ protected:
 	
 	void Action();
 
-	void SetPostProcess(bool NewState);
 public:	
 	
 	

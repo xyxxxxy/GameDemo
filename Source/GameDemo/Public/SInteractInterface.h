@@ -18,9 +18,13 @@ class GAMEDEMO_API ISInteractInterface
 public:
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Interact")
 	void Interact(APawn* InstigatorActor);
-	virtual void Interact_Implementation(APawn* InstigatorActor);
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Interact")
+	void OpenCustomDepth();
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Interact")
+	void CloseCustomDepth();
 
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Interact")
 	void GetCategory(FName& Name);
-	virtual void GetCategory_Implementation(FName& Name);
 };

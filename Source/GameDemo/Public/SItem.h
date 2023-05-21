@@ -27,20 +27,18 @@ struct FSItem
 	:ID("None")
 	,Number(0)
 	{}
-
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Item")
 	FName ID;
-	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Item")
 	int Number;
 
 };
 USTRUCT(BlueprintType,blueprintable)
-struct GAMEDEMO_API FSItemCategory : public FTableRowBase
+struct GAMEDEMO_API FSItemProperty : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	FSItemCategory()
+	FSItemProperty()
 	:ID("None")
 	,Category(ECategory::Interact)
 	,Icon()

@@ -22,5 +22,8 @@ public:
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category="Action | UI")
 	void PushWidget(const TSoftClassPtr<UUserWidget>& WidgetClass, bool bIsPlayAnimation = false);
 	
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category="Action | UI")
+	void CloseUI();
+	
 	
 };

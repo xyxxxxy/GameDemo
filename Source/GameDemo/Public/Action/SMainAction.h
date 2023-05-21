@@ -32,6 +32,8 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Action")
 	FName AbilityTag;
+
+	void SetProcessSettings(AActor* Instigator,bool bNewState);
 	
 public:
 	

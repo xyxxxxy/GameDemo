@@ -4,9 +4,14 @@
 #include "SGamePlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "SGameMacros.h"
+#include "UGameBlueprintFunctionLibrary.h"
+#include "Action/SActionComponent.h"
 #include "Engine/AssetManager.h"
 #include "Engine/StreamableManager.h"
+#include "Framework/Application/NavigationConfig.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void ASGamePlayerController::OnPossess(APawn* InPawn)
@@ -15,7 +20,6 @@ void ASGamePlayerController::OnPossess(APawn* InPawn)
 	
 	WidgetDelegate.BindUFunction(this,"CreateMainWidget");
 	GetWorld()->GetTimerManager().SetTimer(WidgetTimer,WidgetDelegate,DelayTime,false);
-	
 }
 
 void ASGamePlayerController::TogglePauseMenu()
@@ -38,7 +42,6 @@ void ASGamePlayerController::TogglePauseMenu()
 	
 	StreamableManager.RequestAsyncLoad(SoftObjectPath,[&SoftObjectPath,this]()
 	{
-		
 		UClass* WidgetClass = Cast<UClass>(SoftObjectPath.ResolveObject());
 		if(WidgetClass)
 		{
@@ -52,12 +55,42 @@ void ASGamePlayerController::TogglePauseMenu()
 			}
 		}
 	},FStreamableManager::DefaultAsyncLoadPriority,false);
-	
-	
-	
 }
 
+void ASGamePlayerController::OpenActionMenu()
+{
+	if(USActionComponent* Comp = Cast<USActionComponent>
+		(GetCharacter()->GetComponentByClass(USActionComponent::StaticClass())))
+	{
+		if(Comp->IsMainActionDeployed())
+		{
+			return;
+		}
+	}
+	
+	if(ensure(ActionMenuClass))
+	{
+		ActionMenuInstance = CreateWidget<UUserWidget>(this, ActionMenuClass);
+		if(ActionMenuInstance)
+		{
+			ActionMenuInstance->AddToViewport();
+			SetShowMouseCursor(false);
+			UGameBlueprintFunctionLibrary::ControlPlayerInput(GetWorld(),false);
+		}
+	}
+}
 
+void ASGamePlayerController::CloseActionMenu()
+{
+	DISPLAY_LOG(TEXT("Close Action Menu!"));
+	if(ActionMenuInstance && ActionMenuInstance->IsInViewport())
+	{
+		if(ActionMenuInstance->Implements<USUIManagerInterface>())
+		{
+			Execute_CloseUI(ActionMenuInstance);
+		}
+	}
+}
 
 
 void ASGamePlayerController::CreateMainWidget()
@@ -77,8 +110,22 @@ void ASGamePlayerController::CreateMainWidget()
 void ASGamePlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-
+	
 	InputComponent->BindAction("PauseMenu",IE_Pressed,this,&ASGamePlayerController::TogglePauseMenu);
+	InputComponent->BindAction("SwitchAction",IE_Pressed,this,&ASGamePlayerController::OpenActionMenu);
+	InputComponent->BindAction("SwitchAction",IE_Released,this,&ASGamePlayerController::CloseActionMenu);
+}
+
+void ASGamePlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if(IsLocalController())
+	{
+		auto Navigation = MakeShared<FNavigationConfig>();
+		Navigation->bTabNavigation = false;
+		FSlateApplication::Get().SetNavigationConfig(Navigation);
+	}
 }
 
 

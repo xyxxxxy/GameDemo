@@ -4,9 +4,47 @@
 #include "SNoCollisionActor.h"
 #include "SGameMacros.h"
 #include "Action/SActionComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
+ASNoCollisionActor::ASNoCollisionActor()
+{
+ 
+	PrimaryActorTick.bCanEverTick = true;
 
-void ASNoCollisionActor::RecoverMaterial(AActor* InstigatorActor)
+	SceneComp=CreateDefaultSubobject<USceneComponent>(TEXT("SceneComp"));
+	RootComponent=SceneComp;
+
+	StaticMeshComp=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
+	StaticMeshComp->SetupAttachment(RootComponent);
+
+	StaticMeshComp->SetCollisionProfileName("SetNoCollision");
+	Tags={"NoCollision"};
+	EffectTime=5.0f;
+	TranslucentCollisionName="OverlapAll";
+	bIsTranslucent=false;
+}
+
+void ASNoCollisionActor::ActionInteract_Implementation(AActor* InstigatorActor)
+{
+	ISActionInterface::ActionInteract_Implementation(InstigatorActor);
+
+	EffectDelegate.BindUFunction(this,"Recover",InstigatorActor);
+
+	SetNoCollisionMaterial();
+
+	GetWorld()->GetTimerManager().SetTimer(EffectTimer,EffectDelegate,EffectTime,false);
+	
+	K2_CreateTimeWidget();
+	
+}
+
+bool ASNoCollisionActor::IsTranslucent() const
+{
+	return bIsTranslucent;
+}
+
+void ASNoCollisionActor::Recover(AActor* InstigatorActor)
 {
 	if(USActionComponent* ActionComp=Cast<USActionComponent>
 		(InstigatorActor->GetComponentByClass(USActionComponent::StaticClass())))
@@ -24,6 +62,7 @@ void ASNoCollisionActor::RecoverMaterial(AActor* InstigatorActor)
 	}
 	if(StaticMeshComp)
 	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(),RecoverSound,GetActorLocation());
 		StaticMeshComp->SetCollisionProfileName("SetNoCollision");
 		ClearTimer();
 		OnEffectEnd.Broadcast();
@@ -59,40 +98,11 @@ void ASNoCollisionActor::ClearTimer()
 	GetWorld()->GetTimerManager().ClearTimer(EffectTimer);
 }
 
-ASNoCollisionActor::ASNoCollisionActor()
-{
- 
-	PrimaryActorTick.bCanEverTick = true;
 
-	SceneComp=CreateDefaultSubobject<USceneComponent>(TEXT("SceneComp"));
-	RootComponent=SceneComp;
 
-	StaticMeshComp=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
-	StaticMeshComp->SetupAttachment(RootComponent);
 
-	StaticMeshComp->SetCollisionProfileName("SetNoCollision");
-	Tags={"NoCollision"};
-	EffectTime=5.0f;
-	TranslucentCollisionName="OverlapAll";
-	bIsTranslucent=false;
-}
 
-void ASNoCollisionActor::ActionInteract_Implementation(AActor* InstigatorActor)
-{
-	ISActionInterface::ActionInteract_Implementation(InstigatorActor);
 
-	EffectDelegate.BindUFunction(this,"RecoverMaterial",InstigatorActor);
-
-	SetNoCollisionMaterial();
-
-	GetWorld()->GetTimerManager().SetTimer(EffectTimer,EffectDelegate,EffectTime,false);
-	
-}
-
-bool ASNoCollisionActor::IsTranslucent() const
-{
-	return bIsTranslucent;
-}
 
 
 

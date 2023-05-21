@@ -29,8 +29,6 @@ USInteractComponent::USInteractComponent()
 void USInteractComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
 }
 
 
@@ -52,11 +50,8 @@ void USInteractComponent::TraceInspection()
 	if(ASGameCharacter* Player=Cast<ASGameCharacter>(Actor))
 	{
 		FHitResult HitResult;
-
 		const FVector Start =  Player->GetFollowCamera()->GetComponentLocation();
-		
 		const FVector End=Start+Player->GetFollowCamera()->GetForwardVector() * TraceDistance;
-		
 		GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,CollisionChannel);
 
 		// Console
@@ -74,6 +69,10 @@ void USInteractComponent::TraceInspection()
 			{
 				CloseInteractUI();
 				OnUIClosed.Broadcast(Actor);
+				if(FocusActor->Implements<USInteractInterface>())
+				{
+					ISInteractInterface::Execute_CloseCustomDepth(FocusActor);
+				}
 			}
 			FocusActor=nullptr;
 			return;
@@ -92,9 +91,11 @@ void USInteractComponent::TraceInspection()
 			FocusActor=HitActor;
 			OpenInteractUI();
 			OnUIOpened.Broadcast(Actor);
-
+			if(FocusActor->Implements<USInteractInterface>())
+			{
+				ISInteractInterface::Execute_OpenCustomDepth(FocusActor);
+			}
 		}
-
 	}
 }
 
@@ -132,14 +133,10 @@ bool USInteractComponent::SetTickEnabled(bool NewState)
 
 void USInteractComponent::TraceInteract(APawn* InstigatorActor)
 {
-	
 	if(FocusActor && FocusActor->Implements<USInteractInterface>())
 	{
-		DISPLAY_LOG(TEXT("Interact success?"));
 		ISInteractInterface::Execute_Interact(FocusActor,InstigatorActor);
 	}
-	
-	DISPLAY_LOG(TEXT("Interact success!"));
 }
 
 

@@ -16,9 +16,10 @@ ASInteractActor::ASInteractActor()
 	InteractComp=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("InteractComp"));
 	InteractComp->SetupAttachment(RootComponent);
 	
-
-
 	InteractComp->SetCollisionProfileName("Item");
+
+	InteractComp->SetRenderCustomDepth(false);
+	InteractComp->SetCustomDepthStencilValue(10);
 	
 }
 
@@ -44,7 +45,7 @@ void ASInteractActor::BeginPlay()
 void ASInteractActor::SetMesh()
 {
 	bool bIsFound;
-	FSItemCategory ItemCategory;
+	FSItemProperty ItemCategory;
 	UGameBlueprintFunctionLibrary::FindItemInDataTable(Item,bIsFound,ItemCategory);
 	if(bIsFound)
 	{
@@ -54,21 +55,20 @@ void ASInteractActor::SetMesh()
 	{
 		DISPLAY_LOG(TEXT("Fail to Set StaticMesh!"));
 	}
-	
 }
 
 void ASInteractActor::ActorGetCategory(FName& CategoryName)
 {
 	bool bIsFound;
-	FSItemCategory ItemCategory;
-	UGameBlueprintFunctionLibrary::FindItemInDataTable(Item,bIsFound,ItemCategory);
+	FSItemProperty ItemProperty;
+	UGameBlueprintFunctionLibrary::FindItemInDataTable(Item,bIsFound,ItemProperty);
 
 	if(!bIsFound)
 	{
 		return;
 	}
 
-	switch (ItemCategory.Category)
+	switch (ItemProperty.Category)
 	{
 	case ECategory::Pick_Up:
 		CategoryName = FName("Pick Up");

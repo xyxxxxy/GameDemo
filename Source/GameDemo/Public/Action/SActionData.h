@@ -6,6 +6,7 @@
 #include "Engine/DataTable.h"
 #include "SActionData.generated.h"
 
+class USAction;
 class UNiagaraSystem;
 
 UENUM(BlueprintType)
@@ -47,7 +48,13 @@ struct GAMEDEMO_API FSActionProperty: public FTableRowBase
 	UNiagaraSystem* ActionNiagara;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Action")
-	FName Description; 
+	FName Description;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Action")
+	TSubclassOf<USAction> ActionClass;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Action")
+	FPostProcessSettings ProcessSettings;
 	
 };
 

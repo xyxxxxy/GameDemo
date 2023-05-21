@@ -3,8 +3,29 @@
 
 #include "Action/SMainAction.h"
 #include "SGameMacros.h"
+#include "UGameBlueprintFunctionLibrary.h"
 #include "Action/SActionComponent.h"
 #include "Components/PostProcessComponent.h"
+
+void USMainAction::SetProcessSettings(AActor* Instigator,bool bNewState)
+{
+	if(UPostProcessComponent* Comp=Cast<UPostProcessComponent>
+		(Instigator->GetComponentByClass(UPostProcessComponent::StaticClass())))
+	{
+		Comp->bEnabled=bNewState;
+		if(!bNewState)
+		{
+			return;
+		}
+		bool bIsFound;
+		FSActionProperty Property;
+		UGameBlueprintFunctionLibrary::FindActionInDataTable(ActionName,bIsFound,Property);
+		if(bIsFound)
+		{
+			Comp->Settings = Property.ProcessSettings;
+		}
+	}
+}
 
 bool USMainAction::CanStart_Implementation(AActor* Instigator)
 {
@@ -27,11 +48,9 @@ void USMainAction::StartAction_Implementation(AActor* Instigator)
 void USMainAction::StopAction_Implementation(AActor* Instigator)
 {
 	GetOwningComponent()->SetMainActionDeployed(false);
-	if(UPostProcessComponent* Comp=Cast<UPostProcessComponent>
-  (Instigator->GetComponentByClass(UPostProcessComponent::StaticClass())))
-	{
-		Comp->bEnabled=false;
-	}
+
+	SetProcessSettings(Instigator,false);
+	
 	Super::StopAction_Implementation(Instigator);
 }
 
@@ -39,11 +58,7 @@ void USMainAction::K2_StartDeploy_Implementation(USActionComponent* OwningComp, 
 {
 	Super::K2_StartDeploy_Implementation(OwningComp, Instigator);
 
-	if(UPostProcessComponent* Comp=Cast<UPostProcessComponent>
-		(Instigator->GetComponentByClass(UPostProcessComponent::StaticClass())))
-	{
-		Comp->bEnabled=true;
-	}
+	SetProcessSettings(Instigator,true);
 }
 
 

@@ -22,6 +22,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="UI")
 	TSoftClassPtr<UUserWidget> PauseMenuClass;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="UI")
+	TSubclassOf<UUserWidget> ActionMenuClass;
+
 	UPROPERTY(EditDefaultsOnly,Category="UI")
 	float DelayTime = 1.0f;
 
@@ -33,18 +36,20 @@ protected:
 
 	void TogglePauseMenu();
 
+
+	UFUNCTION(BlueprintCallable,Category="UI")
+	void OpenActionMenu();
+	
+	void CloseActionMenu();
+
 	virtual void SetupInputComponent() override;
+
+	virtual void BeginPlay() override;
 	
 public:
 	
-
 	UFUNCTION(BlueprintCallable,Category="UI")
 	void CreateMainWidget();
-	
-
-
-	
-	
 
 private:
 
@@ -53,4 +58,7 @@ private:
 
 	UPROPERTY()
 	UUserWidget* PauseMenuInstance;
+
+	UPROPERTY()
+	UUserWidget* ActionMenuInstance;
 };
