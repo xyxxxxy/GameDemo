@@ -3,14 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "SGameMode.generated.h"
+#include "GameFramework/SaveGame.h"
+#include "SSaveGame.generated.h"
 
 UCLASS()
-class GAMEDEMO_API ASGameMode : public AGameModeBase
+class GAMEDEMO_API USSaveGame : public USaveGame
 {
 	GENERATED_BODY()
-
-public:
-	ASGameMode();
+	
 };

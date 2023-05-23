@@ -41,7 +41,7 @@ public:
 	
 	virtual void StartAction_Implementation(AActor* Instigator) override;
 	
-	virtual void TraceInspection_Implementation(AActor* Instigator) override;
+	virtual void TraceInspection_Implementation(AActor* InstigatorActor) override;
 
 	virtual bool ShouldStartMainAction(AActor* Instigator) override;
 

@@ -12,9 +12,9 @@
 class USActionComponent;
 class UWorld;
 
-
 static TAutoConsoleVariable<int32> CShowActionTrace(TEXT("Action.ShowTrace"),1,
 											 TEXT("Enable Show Trace."),ECVF_Cheat);
+
 UCLASS(Blueprintable)
 class GAMEDEMO_API USAction : public UObject,public ISActionInterface
 {
@@ -40,11 +40,7 @@ protected:
 	TEnumAsByte<EActionCategory::Type> ActionCategory = EActionCategory::NormalAction;
 	
 	bool bIsRunning;
-
-
-
 	
-
 	UFUNCTION(BlueprintCallable,Category="Action")
 	USActionComponent* GetOwningComponent() const;
 	

@@ -8,6 +8,9 @@
 
 
 
+
+
+
 USActionComponent* USAction::GetOwningComponent() const
 {
 	return Cast<USActionComponent>(GetOuter());

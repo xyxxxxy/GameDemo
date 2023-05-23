@@ -14,7 +14,7 @@ ASGameCharacter* UGameBlueprintFunctionLibrary::GetPlayer(const UObject* WorldCo
 	{
 		return player;
 	}
-	DISPLAY_SCREEN("Fail to cast to player!");
+	//DISPLAY_SCREEN("Fail to cast to player!");
 	return  nullptr;
 }
 
@@ -51,7 +51,7 @@ void UGameBlueprintFunctionLibrary::FindItemInDataTable(FSItem item, bool& bIsFo
 		{
 			if(const FSItemProperty* RowPtr = DataTablePtr->FindRow<FSItemProperty>(RowName,ContextString))
 			{
-				DISPLAY_SCREEN(TEXT("Success to load item category!"));
+				//DISPLAY_SCREEN(TEXT("Success to load item category!"));
 				category=*RowPtr;
 				bIsFound=true;
 				return;
@@ -74,7 +74,7 @@ void UGameBlueprintFunctionLibrary::FindActionInDataTable(FName Name, bool& bIsF
 		{
 			if(const FSActionProperty* RowPtr = DataTablePtr->FindRow<FSActionProperty>(RowName,ContextString))
 			{
-				DISPLAY_SCREEN(TEXT("Success to load Action category!"));
+				//DISPLAY_SCREEN(TEXT("Success to load Action category!"));
 				Property= *RowPtr;
 				bIsFound=true;
 				return;

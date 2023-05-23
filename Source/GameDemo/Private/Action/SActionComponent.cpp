@@ -29,8 +29,6 @@ void USActionComponent::BeginPlay()
 	{
 		AddAction(GetOwner(),ActionClass);
 	}
-	DISPLAY_LOG(TEXT("Begin!"));
-
 }
 
 void USActionComponent::ActionTraceCheck()
