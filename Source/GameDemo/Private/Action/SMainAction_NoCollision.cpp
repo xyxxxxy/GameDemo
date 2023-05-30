@@ -7,6 +7,7 @@
 #include "SGameCharacter.h"
 #include "SGameMacros.h"
 #include "SNoCollisionActor.h"
+#include "SNoCollisionComponent.h"
 
 
 bool USMainAction_NoCollision::IsValidTime() const
@@ -69,9 +70,6 @@ bool USMainAction_NoCollision::EliminateCollisionTrace(AActor* Instigator)
 }
 
 
-
-
-
 void USMainAction_NoCollision::StartAction_Implementation(AActor* Instigator)
 {
 	if(!IsValidTime())
@@ -83,16 +81,25 @@ void USMainAction_NoCollision::StartAction_Implementation(AActor* Instigator)
 	if(EliminateCollisionTrace(Instigator))
 	{
 		bIsValidTime=false;
-		if(HitActor->Implements<USActionInterface>())
+		// if(HitActor->Implements<USActionInterface>())
+		// {
+		// 	if(ASNoCollisionActor* Actor=Cast<ASNoCollisionActor>(HitActor))
+		// 	{
+		// 		Actor->OnEffectEnd.AddDynamic(this,&USMainAction_NoCollision::TimerCallBack);
+		// 		StopAction_Implementation(Instigator);
+		// 		Execute_ActionInteract(HitActor,Instigator);
+		// 	}
+		// }
+		if(USNoCollisionComponent* Comp = Cast<USNoCollisionComponent>
+			(HitActor->GetComponentByClass(USNoCollisionComponent::StaticClass())))
 		{
-			if(ASNoCollisionActor* Actor=Cast<ASNoCollisionActor>(HitActor))
+			if(Comp->Implements<USActionInterface>())
 			{
-				Actor->OnEffectEnd.AddDynamic(this,&USMainAction_NoCollision::TimerCallBack);
-				Execute_ActionInteract(HitActor,Instigator);
+				Comp->OnEffectEnd.AddDynamic(this,&USMainAction_NoCollision::TimerCallBack);
+				StopAction_Implementation(Instigator);
+				Execute_ActionInteract(Comp,Instigator);
 			}
 		}
-		StopAction_Implementation(Instigator);
-
 	}
 	else
 	{
@@ -155,8 +162,9 @@ void USMainAction_NoCollision::UpdateMaterialsByNoCollision(TArray<AActor*> Acto
 		if(UStaticMeshComponent* Comp=Cast<UStaticMeshComponent>
 	(Actor->GetComponentByClass(UStaticMeshComponent::StaticClass())))
 		{
-			int32 MaterialNum= Comp->GetNumMaterials();
-			TArray<UMaterialInterface*> Materials= Comp->GetMaterials();
+			int32 MaterialNum = Comp->GetNumMaterials();
+			//DISPLAY_SCREEN(FString("Mat NUm: ").Append(FString::FromInt(MaterialNum)));
+			TArray<UMaterialInterface*> Materials = Comp->GetMaterials();
 			for(int32 i=0;i<MaterialNum;++i)
 			{
 				if(bIsToDeploy)
@@ -167,7 +175,6 @@ void USMainAction_NoCollision::UpdateMaterialsByNoCollision(TArray<AActor*> Acto
 				{
 					Comp->SetMaterial(i,nullptr);
 				}
-				DISPLAY_LOG(TEXT("Materials has set!"));
 			}
 		}
 	}

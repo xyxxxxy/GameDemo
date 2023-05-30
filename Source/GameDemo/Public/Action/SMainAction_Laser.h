@@ -25,6 +25,12 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly,Category = "Laser")
 	float LaserDistance = 1500.0f;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Laser")
+	FVector BeamEnd = FVector::ZeroVector;
+
+	UPROPERTY(EditDefaultsOnly,Category = "Laser")
+	int32 MaxBeamNumber = 7;
 	
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> BeamActors;
@@ -40,6 +46,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent,meta=( DisplayName = "SpawnBeam"))
 	void K2_SpawnBeam(FVector Start,FVector End);
 
+	UFUNCTION(BlueprintCallable,BlueprintPure ,Category = "Action | Laser")
+	bool IsReflect() const;
+
+	virtual void StartAction_Implementation(AActor* Instigator) override;
+
 	virtual void TraceInspection_Implementation(AActor* InstigatorActor) override;
 
 	virtual void K2_StartDeploy_Implementation(USActionComponent* OwningComp, AActor* Instigator) override;
@@ -47,6 +58,12 @@ public:
 	virtual void InitialVariable() override;
 
 	virtual void StopAction_Implementation(AActor* Instigator) override;
+
+private:
+
+	bool bIsReflect = false;
 };
+
+
 
 

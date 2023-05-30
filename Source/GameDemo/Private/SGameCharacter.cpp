@@ -59,6 +59,8 @@ void ASGameCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAction("Sprint",IE_Pressed,this,&ASGameCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint",IE_Released,this,&ASGameCharacter::StopSprint);
 
+	PlayerInputComponent->BindAction("Jump",IE_Pressed,this,&ASGameCharacter::JumpAction);
+
 	PlayerInputComponent->BindAction("MainActionDeploy",IE_Pressed,this,&ASGameCharacter::MainActionDeploy);
 	PlayerInputComponent->BindAction("Action",IE_Pressed,this,&ASGameCharacter::Action);
 }
@@ -118,6 +120,14 @@ void ASGameCharacter::StopSprint()
 	if(ActionComp)
 	{
 		ActionComp->StopActionByName(this,"Sprint");
+	}
+}
+
+void ASGameCharacter::JumpAction()
+{
+	if(ActionComp)
+	{
+		ActionComp->StartActionByName(this,"Jump");
 	}
 }
 

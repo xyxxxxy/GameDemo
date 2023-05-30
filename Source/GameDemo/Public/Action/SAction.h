@@ -12,7 +12,7 @@
 class USActionComponent;
 class UWorld;
 
-static TAutoConsoleVariable<int32> CShowActionTrace(TEXT("Action.ShowTrace"),1,
+static TAutoConsoleVariable<int32> CShowActionTrace(TEXT("Action.ShowTrace"),0,
 											 TEXT("Enable Show Trace."),ECVF_Cheat);
 
 UCLASS(Blueprintable)
@@ -26,6 +26,9 @@ protected:
 
 	UPROPERTY(EditAnywhere,Category="Tags")
 	FGameplayTagContainer GrantTags;
+
+	UPROPERTY(EditAnywhere,Category="Tags")
+	FGameplayTagContainer DeployBlockedTags;
 	
 	UPROPERTY(EditDefaultsOnly,Category="Action")
 	UAnimMontage* ActionAnimMontage;

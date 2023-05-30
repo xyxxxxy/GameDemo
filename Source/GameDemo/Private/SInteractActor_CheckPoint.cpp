@@ -19,24 +19,32 @@ void ASInteractActor_CheckPoint::Interact_Implementation(APawn* InstigatorActor)
 
 	DISPLAY_LOG(FString("Number : ").Append(FString::FromInt(CPNumber)));
 	
+	if(CheckWidgetInstance && CheckWidgetInstance->IsInViewport())
+	{
+		return;
+	}
+	
 	LastCheckPoint = this;
 
-	// if(!CheckWidgetInstance && ensure(CheckWidgetClass))
-	// {
-	// 	CheckWidgetInstance = CreateWidget<UUserWidget>(GetWorld(),CheckWidgetClass);
-	// 	if(CheckWidgetInstance)
-	// 	{
-	// 		CheckWidgetInstance->AddToViewport();
-	// 	}
-	// }
+	if(ensure(CheckWidgetClass))
+	{
+		CheckWidgetInstance = CreateWidget<UUserWidget>(GetWorld(),CheckWidgetClass);
+		if(CheckWidgetInstance)
+		{
+			CheckWidgetInstance->AddToViewport();
+		}
+	}
 }
 
 void ASInteractActor_CheckPoint::Respawn(APawn* Pawn,APlayerController* PC)
 {
-	
-	Pawn->SetActorTransform(FTransform(PlayerLocationComp->GetComponentRotation(),
-		PlayerLocationComp->GetComponentLocation()));
-	PC->Possess(Pawn);
+	if(LastCheckPoint != nullptr)
+	{
+		PC->UnPossess();
+		Pawn->SetActorTransform(FTransform(LastCheckPoint->PlayerLocationComp->GetComponentRotation(),
+	LastCheckPoint->PlayerLocationComp->GetComponentLocation()));
+		PC->Possess(Pawn);
+	}
 }
 
 void ASInteractActor_CheckPoint::OnConstruction(const FTransform& Transform)

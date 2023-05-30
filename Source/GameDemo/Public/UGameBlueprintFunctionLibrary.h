@@ -9,7 +9,7 @@
 
 class ASGameCharacter;
 
-UCLASS(meta=( DisplayName = "GameLibrary"))
+UCLASS(meta=( DisplayName = "SGameLibrary"))
 class GAMEDEMO_API UGameBlueprintFunctionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
@@ -21,6 +21,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable,Category="GameLibrary | Player",meta=(WorldContext = "WorldContextObject"))
 	static void ControlPlayerInput(const UObject* WorldContextObject,bool bIsEnabled);
+
+	UFUNCTION(BlueprintCallable,Category="GameLibrary | Player",meta=(WorldContext = "WorldContextObject"))
+	static void Rebirth(APawn* Pawn,APlayerController* PC);
 
 	UFUNCTION(BlueprintCallable,Category="GameLibrary | Item")
 	static void FindItemInDataTable( FSItem item,bool& bIsFound,FSItemProperty& Property);

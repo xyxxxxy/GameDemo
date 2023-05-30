@@ -59,7 +59,7 @@ private:
 
 	UPROPERTY()
 	UUserWidget* PauseMenuInstance;
-
+	
 	UPROPERTY()
 	UUserWidget* ActionMenuInstance;
 };

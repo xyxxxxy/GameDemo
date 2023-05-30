@@ -5,10 +5,7 @@
 
 #include "Action/SActionComponent.h"
 #include "SGameMacros.h"
-
-
-
-
+#include "Action/SMainAction.h"
 
 
 USActionComponent* USAction::GetOwningComponent() const
@@ -53,7 +50,11 @@ void USAction::ValReset_Implementation()
 void USAction::K2_StartDeploy_Implementation(USActionComponent* OwningComp,AActor* Instigator)
 {
 	bIsRunning=true;
-	GetOwningComponent()->SetComponentTickEnabled(true);
+	
+	if(GetClass()->IsChildOf(USMainAction::StaticClass()))
+	{
+		GetOwningComponent()->SetComponentTickEnabled(true);
+	}
 	ValReset();
 }
 
@@ -101,7 +102,12 @@ void USAction::StopAction_Implementation(AActor* Instigator)
 	if(USActionComponent* Comp=GetOwningComponent())
 	{
 		ValReset();
-		Comp->SetComponentTickEnabled(false);
+
+		if(GetClass()->IsChildOf(USMainAction::StaticClass()))
+		{
+			Comp->SetComponentTickEnabled(false);
+		}
+		
 		Comp->ActiveTag.RemoveTags(GrantTags);
 		bIsRunning=false;
 		Comp->OnActionStopped.Broadcast(Comp,this);

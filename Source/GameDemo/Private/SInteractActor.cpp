@@ -85,6 +85,18 @@ void ASInteractActor::ActorGetCategory(FName& CategoryName)
 	}
 }
 
+void ASInteractActor::CloseCustomDepth_Implementation()
+{
+	ISInteractInterface::CloseCustomDepth_Implementation();
 
+	InteractComp->SetRenderCustomDepth(false);
+}
+
+void ASInteractActor::OpenCustomDepth_Implementation()
+{
+	ISInteractInterface::OpenCustomDepth_Implementation();
+
+	InteractComp->SetRenderCustomDepth(true);
+}
 
 

@@ -64,6 +64,7 @@ void USMainAction::K2_StartDeploy_Implementation(USActionComponent* OwningComp, 
 
 bool USMainAction::ShouldStartMainAction(AActor* Instigator)
 {
+	
 	return true;
 }
 

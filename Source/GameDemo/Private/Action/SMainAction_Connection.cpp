@@ -8,6 +8,7 @@
 #include "Action/SActionComponent.h"
 #include "SGameMacros.h"
 #include "SNoCollisionActor.h"
+#include "SNoCollisionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/StaticMeshActor.h"
 #include "Kismet/GameplayStatics.h"
@@ -67,7 +68,6 @@ void USMainAction_Connection::TraceInspection_Implementation(AActor* InstigatorA
 		
 		if(HitResult.bBlockingHit)
 		{
-
 			UPrimitiveComponent* Comp=HitResult.GetComponent();
 			if(HitResult.PhysMaterial.Get() == DesiredPhysicsMaterial)
 			{
@@ -123,16 +123,12 @@ void USMainAction_Connection::UpdateMaterials(TArray<AStaticMeshActor*> Actors,b
 			{
 				if(bIsToDeploy)
 				{
-					DISPLAY_LOG(TEXT("Deploy Mat"));
 					Comp->SetMaterial(MaterialIndex,DeployedMaterial);
 				}
 				else
 				{
-					DISPLAY_LOG(TEXT("Normal Mat"));
 					Comp->SetMaterial(MaterialIndex,NormalMaterial);
 				}
-
-				DISPLAY_LOG(TEXT("Materials has set!"));
 			}
 		}
 	}
@@ -148,6 +144,7 @@ void USMainAction_Connection::FirstTrace(AActor* Instigator)
 		FCollisionQueryParams QueryParams;
 		QueryParams.bTraceComplex=true;
 		QueryParams.bReturnPhysicalMaterial=true;
+		
 		GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,
 			ECC_Visibility,QueryParams);
 		
@@ -305,19 +302,24 @@ void USMainAction_Connection::ProbeNoCollision(AActor* InstigatorActor)
 			CurrentTraceDistance=TraceDistance;
 			return;
 		}
-		if(ASNoCollisionActor* Actor=Cast<ASNoCollisionActor>(HitResult.GetActor()))
+		if(USNoCollisionComponent* CollisionComp = Cast<USNoCollisionComponent>
+			(HitResult.GetActor()->GetComponentByClass(USNoCollisionComponent::StaticClass())))
 		{
-			if(Actor->IsTranslucent())
+			if(CollisionComp->IsTranslucent())
 			{
-				CurrentTraceDistance=TraceDistance*TraceMagnification;
+				CurrentTraceDistance = TraceDistance*TraceMagnification;
 			}
 			else
 			{
-				CurrentTraceDistance=TraceDistance;
+				CurrentTraceDistance = TraceDistance;
 			}
 		}
 	}
-	CurrentTraceDistance=TraceDistance;
+	else
+	{
+		CurrentTraceDistance=TraceDistance;
+	}
+
 }
 
 bool USMainAction_Connection::UpdateSingleMaterial(int32 SectionIndex, UPrimitiveComponent* PrimitiveComp,

@@ -18,7 +18,7 @@ void USMainAction_Laser::CastLight(AActor* InstigatorActor,FVector HandOrigin, F
 	FVector L_HandOrigin = HandOrigin;
 	float L_Distance = Distance;
 
-	FVector BeamStart,BeamEnd;
+	FVector BeamStart;
 
 	ClearBeams();
 	
@@ -36,6 +36,7 @@ void USMainAction_Laser::CastLight(AActor* InstigatorActor,FVector HandOrigin, F
 	if(!HitResult.bBlockingHit)
 	{
 		K2_SpawnBeam(L_HandOrigin,End);
+		bIsReflect = false;
 		return;
 	}
 	
@@ -44,8 +45,10 @@ void USMainAction_Laser::CastLight(AActor* InstigatorActor,FVector HandOrigin, F
 	L_Direction = L_Direction.GetSafeNormal();
 	
 	bool bShouldContinue = true;
+
+	int32 BeamNumbers = 0;
 	
-	while(bShouldContinue)
+	while(bShouldContinue && BeamNumbers < MaxBeamNumber)
 	{
 		FHitResult LaserHitResult;
 		
@@ -54,8 +57,10 @@ void USMainAction_Laser::CastLight(AActor* InstigatorActor,FVector HandOrigin, F
 		GetWorld()->LineTraceSingleByChannel(LaserHitResult,L_Origin,
 			End,CollisionChannel,QueryParams);
 		
-		DrawDebugLine(GetWorld(),L_Origin,End,FColor::Red,false,0.1f);
-		//DISPLAY_LOG(TEXT("Laser Debug Trace"));
+		if(CShowActionTrace.GetValueOnAnyThread())
+		{
+			DrawDebugLine(GetWorld(),L_Origin,End,FColor::Red,false,0.1f);
+		}
 		// Start
 		BeamStart = L_Origin;
 		
@@ -82,6 +87,8 @@ void USMainAction_Laser::CastLight(AActor* InstigatorActor,FVector HandOrigin, F
 		}
 		
 		K2_SpawnBeam(BeamStart,BeamEnd);
+		bIsReflect = true;
+		BeamNumbers++;
 	}
 }
 
@@ -92,6 +99,18 @@ void USMainAction_Laser::ClearBeams()
 		Actor->Destroy();
 	}
 	BeamActors.Empty();
+}
+
+bool USMainAction_Laser::IsReflect() const
+{
+	return bIsReflect;
+}
+
+void USMainAction_Laser::StartAction_Implementation(AActor* Instigator)
+{
+	Super::StartAction_Implementation(Instigator);
+
+	
 }
 
 void USMainAction_Laser::TraceInspection_Implementation(AActor* InstigatorActor)
@@ -116,6 +135,7 @@ void USMainAction_Laser::K2_StartDeploy_Implementation(USActionComponent* Owning
 void USMainAction_Laser::InitialVariable()
 {
 	ClearBeams();
+	bIsReflect = false;
 }
 
 void USMainAction_Laser::StopAction_Implementation(AActor* Instigator)

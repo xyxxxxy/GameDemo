@@ -37,6 +37,8 @@ public:
 private:
 
 	FOnTimelineFloat UpdateFunctionFloat;
+
+	bool bIsOpen = false;
 	
 	UFUNCTION()
 	void UpdateTimelineComp(float Output);

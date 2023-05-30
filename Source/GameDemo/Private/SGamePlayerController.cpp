@@ -27,6 +27,7 @@ void ASGamePlayerController::TogglePauseMenu()
 	DISPLAY_LOG(TEXT("Toggle pause menu!"));
 	if(PauseMenuInstance && PauseMenuInstance->IsInViewport())
 	{
+
 		PauseMenuInstance->RemoveFromParent();
 		PauseMenuInstance = nullptr;
 		

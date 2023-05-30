@@ -231,6 +231,17 @@ void USActionComponent::UnbindMainActionDeploy()
 	}
 }
 
+void USActionComponent::StopAllActions()
+{
+	for(USAction* Action : Actions)
+	{
+		if(Action->IsRunning())
+		{
+			Action->StopAction(GetOwner());
+		}
+	}
+}
+
 
 
 

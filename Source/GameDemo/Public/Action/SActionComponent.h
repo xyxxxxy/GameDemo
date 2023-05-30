@@ -104,6 +104,8 @@ public:
 	void BindMainActionDeploy();
 
 	void UnbindMainActionDeploy();
+
+	void StopAllActions();
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnActionStateChanged OnActionStarted;

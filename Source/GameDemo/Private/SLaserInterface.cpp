@@ -3,6 +3,6 @@
 
 #include "SLaserInterface.h"
 
-void ISLaserInterface::LaserInteract_Implementation(AActor* InstigatorActor)
+void ISLaserInterface::LaserInteract_Implementation(AActor* InstigatorActor,bool bNewState)
 {
 }

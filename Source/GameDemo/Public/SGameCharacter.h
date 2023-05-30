@@ -57,6 +57,8 @@ protected:
 	void StartSprint();
 
 	void StopSprint();
+
+	void JumpAction();
 	
 	void MainActionDeploy();
 	

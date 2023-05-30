@@ -30,8 +30,17 @@ void ASInteractActor_Door::Interact_Implementation(APawn* InstigatorActor)
 {
 	Super::Interact_Implementation(InstigatorActor);
 
-	DoorTimelineComp->Play();
-
+	if(bIsOpen)
+	{
+		DoorTimelineComp->Reverse();
+		bIsOpen = false;
+	}
+	else
+	{
+		DoorTimelineComp->Play();
+		bIsOpen = true;
+	}
+	
 }
 
 void ASInteractActor_Door::UpdateTimelineComp(float Output)

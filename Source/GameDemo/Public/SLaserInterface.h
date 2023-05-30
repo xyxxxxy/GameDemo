@@ -20,7 +20,7 @@ class GAMEDEMO_API ISLaserInterface
 public:
 
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category="Action | Laser")
-	void LaserInteract(AActor* InstigatorActor);
-	virtual void LaserInteract_Implementation(AActor* InstigatorActor);
+	void LaserInteract(AActor* InstigatorActor,bool bNewState);
+	virtual void LaserInteract_Implementation(AActor* InstigatorActor,bool bNewState);
 	
 };

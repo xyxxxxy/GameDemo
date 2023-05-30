@@ -19,6 +19,8 @@ ASActor_Connection::ASActor_Connection()
 	ConnectionComp=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ConnectionComp"));
 	ConnectionComp->SetupAttachment(SceneComp);
 
+	ConnectionComp->OnComponentHit.AddDynamic(this,&ASActor_Connection::StopGrow);
+
 	Time=0.0f;
 }
 
@@ -37,6 +39,15 @@ void ASActor_Connection::BeginPlay()
 	Super::BeginPlay();
 	RelativeLocation=ConnectionComp->GetRelativeLocation()*2.0f;
 	
+}
+
+void ASActor_Connection::StopGrow(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	if(!HitComponent->IsSimulatingPhysics())
+	{
+		SetActorTickEnabled(false);
+	}
 }
 
 // Called every frame

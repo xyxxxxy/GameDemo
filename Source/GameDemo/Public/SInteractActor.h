@@ -6,14 +6,13 @@
 #include "SInteractInterface.h"
 #include "SItem.h"
 #include "GameFramework/Actor.h"
+#include "GameplayTagContainer.h"
 #include "SInteractActor.generated.h"
 
 UCLASS()
 class GAMEDEMO_API ASInteractActor : public AActor,public ISInteractInterface
 {
 	GENERATED_BODY()
-
-
 
 public:	
 
@@ -39,7 +38,8 @@ protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Component")
 	UStaticMeshComponent* InteractComp;
 
-
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Key")
+	FGameplayTag KeyCard;
 	
 	virtual void BeginPlay() override;
 
@@ -49,16 +49,6 @@ protected:
 	
 };
 
-inline void ASInteractActor::CloseCustomDepth_Implementation()
-{
-	ISInteractInterface::CloseCustomDepth_Implementation();
 
-	InteractComp->SetRenderCustomDepth(false);
-}
 
-inline void ASInteractActor::OpenCustomDepth_Implementation()
-{
-	ISInteractInterface::OpenCustomDepth_Implementation();
 
-	InteractComp->SetRenderCustomDepth(true);
-}

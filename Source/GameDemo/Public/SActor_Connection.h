@@ -16,6 +16,7 @@ public:
 	ASActor_Connection();
 
 protected:
+	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Component")
 	USceneComponent* RootComp;
 
@@ -28,13 +29,18 @@ protected:
 	UPROPERTY()
 	FVector RelativeLocation;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float Time;
 
 	UFUNCTION()
 	void Connect();
 
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void StopGrow(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 	
 public:
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Connection",meta=(ExposeOnSpawn))

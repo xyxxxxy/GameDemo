@@ -14,6 +14,8 @@ class GAMEDEMO_API ASInteractActor_CheckPoint : public ASInteractActor
 public:
 	
 	ASInteractActor_CheckPoint();
+	
+	static void Respawn(APawn* Pawn,APlayerController* PC);
 
 	virtual void Interact_Implementation(APawn* InstigatorActor) override;
 
@@ -25,7 +27,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly,Category = "UI")
 	TSubclassOf<UUserWidget> CheckWidgetClass;
 
-	void Respawn(APawn* Pawn,APlayerController* PC);
+
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 	

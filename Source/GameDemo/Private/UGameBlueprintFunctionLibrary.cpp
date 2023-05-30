@@ -5,6 +5,7 @@
 #include "SItem.h"
 #include "Action/SActionData.h"
 #include "SGameMacros.h"
+#include "SInteractActor_CheckPoint.h"
 #include "Kismet/GameplayStatics.h"
 
 // player
@@ -37,28 +38,41 @@ void UGameBlueprintFunctionLibrary::ControlPlayerInput(const UObject* WorldConte
 	
 }
 
+void UGameBlueprintFunctionLibrary::Rebirth(APawn* Pawn,APlayerController* PC)
+{
+	ASInteractActor_CheckPoint::Respawn(Pawn,PC);
+}
+
 //item
 void UGameBlueprintFunctionLibrary::FindItemInDataTable(FSItem item, bool& bIsFound,FSItemProperty& category)
 {
 	const UDataTable* DataTablePtr=LoadObject<UDataTable>
-	(nullptr,UTF8_TO_TCHAR("DataTable'/Game/Data/ItemCategoryDataTable.ItemCategoryDataTable'"));
+	(nullptr,UTF8_TO_TCHAR("DataTable'/Game/Data/ItemPropertyDataTable.ItemPropertyDataTable'"));
 	FString ContextString;
 	const FName ID=item.ID;
-	TArray<FName> RowNames=DataTablePtr->GetRowNames();
-	for(const auto& RowName:RowNames)
+	if(DataTablePtr)
 	{
-		if(ID == RowName)
+		TArray<FName> RowNames=DataTablePtr->GetRowNames();
+		for(const auto& RowName:RowNames)
 		{
-			if(const FSItemProperty* RowPtr = DataTablePtr->FindRow<FSItemProperty>(RowName,ContextString))
+			if(ID == RowName)
 			{
-				//DISPLAY_SCREEN(TEXT("Success to load item category!"));
-				category=*RowPtr;
-				bIsFound=true;
-				return;
+				if(const FSItemProperty* RowPtr = DataTablePtr->FindRow<FSItemProperty>(RowName,ContextString))
+				{
+					//DISPLAY_SCREEN(TEXT("Success to load item category!"));
+					category=*RowPtr;
+					bIsFound=true;
+					return;
+				}
 			}
 		}
+		bIsFound = false;
 	}
-	bIsFound=false;
+	else
+	{
+		bIsFound = false;
+	}
+
 }
 
 void UGameBlueprintFunctionLibrary::FindActionInDataTable(FName Name, bool& bIsFound, FSActionProperty& Property)

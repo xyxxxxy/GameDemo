@@ -30,7 +30,7 @@ protected:
 	TEnumAsByte<ECollisionChannel> NoCollisionChannel;
 
 	UPROPERTY(EditAnywhere,Category="Connection")
-	float TraceMagnification =1.0f;
+	float TraceMagnification = 1.0f;
 
 	UPROPERTY(EditAnywhere,Category="Sound")
 	USoundBase* CollisionCue;
@@ -84,7 +84,6 @@ private:
 	UPROPERTY()
 	UPrimitiveComponent* FirstComponent;
 
-	
 public:
 	
 	virtual void StartAction_Implementation(AActor* Instigator) override;
