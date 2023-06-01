@@ -65,7 +65,7 @@ protected:
 
 public:	
 
-	UPROPERTY(BlueprintReadOnly,Category="Tag")
+	UPROPERTY(BlueprintReadWrite,Category="Tag")
 	FGameplayTagContainer ActiveTag;
 	
 	UFUNCTION(BlueprintCallable,Category="Action")

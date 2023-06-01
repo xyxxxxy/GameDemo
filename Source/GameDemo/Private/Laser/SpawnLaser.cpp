@@ -1,27 +1,24 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "LaserSensor.h"
+#include "Laser/SpawnLaser.h"
 #include "Components/ArrowComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
-ALaserSensor::ALaserSensor()
+ASpawnLaser::ASpawnLaser()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	SceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComp"));
-	RootComponent = SceneComp;
-
+	
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
-	StaticMeshComp->SetupAttachment(SceneComp);
+	RootComponent = StaticMeshComp;
 
 	BeamArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("BeamArrow"));
 	BeamArrow->SetupAttachment(StaticMeshComp);
 }
 
 
-void ALaserSensor::ClearBeams()
+void ASpawnLaser::ClearBeams()
 {
 	for(AActor* Actor : BeamActors)
 	{
@@ -30,7 +27,7 @@ void ALaserSensor::ClearBeams()
 	BeamActors.Empty();
 }
 
-void ALaserSensor::CastLight(FVector Origin, FVector Direction, float Distance)
+void ASpawnLaser::CastLight(FVector Origin, FVector Direction, float Distance)
 {
 	FVector L_Origin = Origin;
 	FVector L_Direction = Direction;

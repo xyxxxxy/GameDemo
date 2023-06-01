@@ -3,26 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SLaserInterface.h"
 #include "GameFramework/Actor.h"
-#include "LaserSensor.generated.h"
+#include "SpawnLaser.generated.h"
 
 class UArrowComponent;
 
 UCLASS()
-class GAMEDEMO_API ALaserSensor : public AActor,public ISLaserInterface
+class GAMEDEMO_API ASpawnLaser : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 
-	ALaserSensor();
+	ASpawnLaser();
 
 protected:
-
-	UPROPERTY(EditDefaultsOnly,Category="Component")
-	USceneComponent* SceneComp;
-
+	
 	UPROPERTY(EditDefaultsOnly,Category="Component")
 	UStaticMeshComponent* StaticMeshComp;
 

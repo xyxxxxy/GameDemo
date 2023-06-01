@@ -67,6 +67,8 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 			if(!CurrentMainAction)
 			{
 				CurrentMainAction = NewAction;
+				DISPLAY_LOG(TEXT("Success to Switch!"));
+				OnActionSwitched.Broadcast(nullptr,NewAction);
 				BindMainActionDeploy();
 			}
 			SwitchMainAction(Instigator,ActionClass);
@@ -135,18 +137,20 @@ void USActionComponent::SwitchMainAction(AActor* Instigator, TSubclassOf<USActio
 		DISPLAY_LOG(TEXT("Switch Equal!"));
 		return;
 	}
-	for(USAction* Action : Actions)
+	if(MainActions.Num() > 0)
 	{
-		if(ActionSwitchTo == Action->GetClass())
+		for(USAction* Action : MainActions)
 		{
-			DISPLAY_LOG(TEXT("Success to Switch!"));
-			UnbindMainActionDeploy();
-			OnActionSwitched.Broadcast(CurrentMainAction,Action);
-			CurrentMainAction = Action;
-			BindMainActionDeploy();
+			if(ActionSwitchTo == Action->GetClass())
+			{
+				DISPLAY_LOG(TEXT("Success to Switch!"));
+				UnbindMainActionDeploy();
+				OnActionSwitched.Broadcast(CurrentMainAction,Action);
+				CurrentMainAction = Action;
+				BindMainActionDeploy();
+			}
 		}
 	}
-
 }
 
 bool USActionComponent::IsMainActionDeployed() const
