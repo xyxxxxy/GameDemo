@@ -8,7 +8,8 @@
 #include "SNoCollisionComponent.generated.h"
 
 class USoundCue;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEffectEnd2);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEffectStart);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEffectEnd);
 
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAMEDEMO_API USNoCollisionComponent : public UActorComponent, public ISActionInterface
@@ -18,8 +19,10 @@ class GAMEDEMO_API USNoCollisionComponent : public UActorComponent, public ISAct
 public:
 	
 	UPROPERTY(BlueprintAssignable)
-	FOnEffectEnd2 OnEffectEnd;
+	FOnEffectStart OnEffectStart;
 	
+	UPROPERTY(BlueprintAssignable)
+	FOnEffectEnd OnEffectEnd;
 	
 	bool IsTranslucent() const;
 
@@ -37,14 +40,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly,Category="NoCollision")
 	FName TranslucentCollisionName;
 
-	UPROPERTY(BlueprintReadOnly,Category = "Handle")
+	UPROPERTY(BlueprintReadWrite,Category = "Handle")
 	FTimerHandle EffectTimer;
 
 	UPROPERTY(EditDefaultsOnly,Category = "Sound")
 	USoundBase* RecoverSound;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Physics")
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Physics")
 	bool bShouldSimulatePhysics = false;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UStaticMeshComponent* CollisionComp;
 
 	FTimerDelegate EffectDelegate;
 
@@ -63,14 +69,10 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-
-	bool bIsTranslucent;
-
-	UPROPERTY()
-	UStaticMeshComponent* CollisionComp;
-
+	
 	UPROPERTY()
 	AActor* ParentActor;
 
+	bool bIsTranslucent;
 	
 };

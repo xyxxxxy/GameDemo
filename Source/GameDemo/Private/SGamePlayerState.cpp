@@ -2,10 +2,8 @@
 
 
 #include "SGamePlayerState.h"
-
 #include "UGameBlueprintFunctionLibrary.h"
 #include "Action/SActionComponent.h"
-#include "SGameMacros.h"
 
 void ASGamePlayerState::BeginPlay()
 {
@@ -16,7 +14,6 @@ void ASGamePlayerState::BeginPlay()
 	{
 		Comp->OnMainActionAcquired.AddDynamic(this,&ASGamePlayerState::SetActionProperty);
 		Comp->OnActionSwitched.AddDynamic(this,&ASGamePlayerState::SetCurrentMainAction);
-		DISPLAY_LOG(TEXT("Player State Add Dynamic!"));
 	}
 	
 }

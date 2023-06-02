@@ -58,9 +58,7 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 		Actions.Add(NewAction);
 		if(NewAction->GetActionCategory() == EActionCategory::MainAction)
 		{
-			DISPLAY_LOG(TEXT("Rectify MainAction!"));
 			MainActions.Add(NewAction);
-
 			// ActionAcquired
 			OnMainActionAcquired.Broadcast(this,NewAction);
 			

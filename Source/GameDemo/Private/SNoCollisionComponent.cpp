@@ -23,6 +23,8 @@ void USNoCollisionComponent::ActionInteract_Implementation(AActor* InstigatorAct
 	
 	GetWorld()->GetTimerManager().SetTimer(EffectTimer,EffectDelegate,EffectTime,false);
 	
+	OnEffectStart.Broadcast();
+	
 	K2_CreateTimeWidget();
 }
 
@@ -99,8 +101,6 @@ void USNoCollisionComponent::BeginPlay()
 	
 	if(ParentActor)
 	{
-		CollisionComp = Cast<UStaticMeshComponent>
-		(ParentActor->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 		if(ensure(CollisionComp))
 		{
 			CollisionComp->SetCollisionProfileName("SetNoCollision");
@@ -108,6 +108,21 @@ void USNoCollisionComponent::BeginPlay()
 			EffectTime=5.0f;
 			TranslucentCollisionName="OverlapAll";
 			bIsTranslucent=false;
+			CollisionComp->SetSimulatePhysics(bShouldSimulatePhysics);
+		}
+		else
+		{
+			CollisionComp = Cast<UStaticMeshComponent>
+			(ParentActor->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+			if(ensure(CollisionComp))
+			{
+				CollisionComp->SetCollisionProfileName("SetNoCollision");
+				ParentActor->Tags = {"NoCollision"};
+				EffectTime=5.0f;
+				TranslucentCollisionName="OverlapAll";
+				bIsTranslucent=false;
+				CollisionComp->SetSimulatePhysics(bShouldSimulatePhysics);
+			}
 		}
 	}
 }

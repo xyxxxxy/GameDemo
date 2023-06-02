@@ -6,10 +6,10 @@
 #include "SGameCharacter.h"
 #include "DrawDebugHelpers.h"
 #include "SGameMacros.h"
-
 #include "Action/SActionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Laser/SLaserSensorInterface.h"
 
 void USMainAction_Laser::CastLight(AActor* InstigatorActor,FVector HandOrigin, FVector Origin, FVector Direction,float Distance)
 {
@@ -36,9 +36,29 @@ void USMainAction_Laser::CastLight(AActor* InstigatorActor,FVector HandOrigin, F
 	if(!HitResult.bBlockingHit)
 	{
 		K2_SpawnBeam(L_HandOrigin,End);
+		DISPLAY_LOG(FString("FirstLaser No Hit!"));
+		if(HitActor)
+		{
+			if(HitActor->Implements<USLaserSensorInterface>())
+			{
+				ISLaserSensorInterface::Execute_SetState(HitActor,InstigatorActor,false);
+				DISPLAY_LOG(FString("LaserSensor : False!"));
+			}
+			HitActor = nullptr;
+		}
 		bIsReflect = false;
 		return;
 	}
+	if(HitActor && HitActor != HitResult.GetActor())
+	{
+		if(HitActor->Implements<USLaserSensorInterface>())
+		{
+			ISLaserSensorInterface::Execute_SetState(HitActor,InstigatorActor,false);
+			DISPLAY_LOG(FString("LaserSensor : False!"));
+		}
+		HitActor = nullptr;
+	}
+	
 	
 	L_Direction = HitResult.Location - L_HandOrigin;
 	L_Origin = L_HandOrigin;
@@ -87,6 +107,16 @@ void USMainAction_Laser::CastLight(AActor* InstigatorActor,FVector HandOrigin, F
 		}
 		
 		K2_SpawnBeam(BeamStart,BeamEnd);
+		
+		HitActor = HitResult.GetActor();
+		if(HitActor)
+		{
+			if(HitActor->Implements<USLaserSensorInterface>())
+			{
+				ISLaserSensorInterface::Execute_SetState(HitActor,InstigatorActor,true);
+				break;
+			}
+		}
 		bIsReflect = true;
 		BeamNumbers++;
 	}
@@ -109,8 +139,6 @@ bool USMainAction_Laser::IsReflect() const
 void USMainAction_Laser::StartAction_Implementation(AActor* Instigator)
 {
 	Super::StartAction_Implementation(Instigator);
-
-	
 }
 
 void USMainAction_Laser::TraceInspection_Implementation(AActor* InstigatorActor)
@@ -135,6 +163,16 @@ void USMainAction_Laser::K2_StartDeploy_Implementation(USActionComponent* Owning
 void USMainAction_Laser::InitialVariable()
 {
 	ClearBeams();
+	if(HitActor)
+	{
+		if(HitActor->Implements<USLaserSensorInterface>())
+		{
+			ISLaserSensorInterface::Execute_SetState(HitActor,GetOwningComponent()->GetOwner(),false);
+			DISPLAY_LOG(FString("LaserSensor : False!"));
+		}
+		HitActor = nullptr;
+	}
+	HitActor = nullptr;
 	bIsReflect = false;
 }
 

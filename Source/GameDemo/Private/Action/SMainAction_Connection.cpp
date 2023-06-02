@@ -30,9 +30,7 @@ void USMainAction_Connection::StartAction_Implementation(AActor* Instigator)
 		if(!HasObstacle(Instigator))
 		{
 			K2_SpawnConnections();
-			DISPLAY_LOG(TEXT("Has Spawn!"));
 			StopAction_Implementation(Instigator);
-			DISPLAY_LOG(TEXT("StopAction After SApawn!"));
 		}
 		else
 		{

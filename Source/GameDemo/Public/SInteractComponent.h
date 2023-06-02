@@ -7,7 +7,7 @@
 #include "SInteractComponent.generated.h"
 
 
-class USWorldWidget_Interaction;
+class USWorldWidget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractChanged,
                                             AActor*, Instigator);
@@ -32,10 +32,10 @@ protected:
 	TEnumAsByte<ECollisionChannel> CollisionChannel;
 
 	UPROPERTY(EditDefaultsOnly,Category="UI")
-	TSubclassOf<USWorldWidget_Interaction> DefaultWidgetClass;
+	TSubclassOf<USWorldWidget> DefaultWidgetClass;
 
 	UPROPERTY()
-	USWorldWidget_Interaction* WidgetDistance;
+	USWorldWidget* WidgetDistance;
 
 	UPROPERTY()
 	bool bIsBlocking = false;

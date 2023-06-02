@@ -7,7 +7,7 @@
 #include "SGameCharacter.h"
 #include "SInteractActor.h"
 #include "SInteractInterface.h"
-#include "SWorldWidget_Interaction.h"
+#include "SWorldWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "SGameMacros.h"
@@ -110,8 +110,7 @@ void USInteractComponent::OpenInteractUI()
 {
 	if(WidgetDistance == nullptr && ensure(DefaultWidgetClass))
 	{
-		WidgetDistance=CreateWidget<USWorldWidget_Interaction>(GetWorld(),DefaultWidgetClass);
-		DISPLAY_LOG(TEXT("Create Widget!1"));
+		WidgetDistance = CreateWidget<USWorldWidget>(GetWorld(),DefaultWidgetClass);
 	}
 	if(WidgetDistance)
 	{
@@ -119,7 +118,6 @@ void USInteractComponent::OpenInteractUI()
 		if(!WidgetDistance->IsInViewport())
 		{
 			WidgetDistance->AddToViewport();
-			DISPLAY_LOG(TEXT("Create Widget!2"));
 		}
 	}
 }

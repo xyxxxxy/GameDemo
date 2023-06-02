@@ -7,7 +7,6 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "SGameMacros.h"
 #include "Components/PostProcessComponent.h"
 
 ASGameCharacter::ASGameCharacter()
@@ -137,14 +136,12 @@ void ASGameCharacter::MainActionDeploy()
 	{
 		if(ActionComp->IsMainActionDeployed())
 		{
-			DISPLAY_LOG(TEXT("1"));
 			ActionComp->StopActionByName(this,FName("MainAction"));
 		}
 		else
 		{
 			if(ActionComp->ShouldStartDeploy(this))
 			{
-				DISPLAY_LOG(TEXT("2"));
 				ActionComp->SetMainActionDeployed(true);
 			}
 		}

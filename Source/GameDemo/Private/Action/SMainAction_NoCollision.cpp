@@ -5,7 +5,6 @@
 #include "Camera/CameraComponent.h"
 #include "DrawDebugHelpers.h"
 #include "SGameCharacter.h"
-#include "SGameMacros.h"
 #include "SNoCollisionActor.h"
 #include "SNoCollisionComponent.h"
 
@@ -81,15 +80,6 @@ void USMainAction_NoCollision::StartAction_Implementation(AActor* Instigator)
 	if(EliminateCollisionTrace(Instigator))
 	{
 		bIsValidTime=false;
-		// if(HitActor->Implements<USActionInterface>())
-		// {
-		// 	if(ASNoCollisionActor* Actor=Cast<ASNoCollisionActor>(HitActor))
-		// 	{
-		// 		Actor->OnEffectEnd.AddDynamic(this,&USMainAction_NoCollision::TimerCallBack);
-		// 		StopAction_Implementation(Instigator);
-		// 		Execute_ActionInteract(HitActor,Instigator);
-		// 	}
-		// }
 		if(USNoCollisionComponent* Comp = Cast<USNoCollisionComponent>
 			(HitActor->GetComponentByClass(USNoCollisionComponent::StaticClass())))
 		{

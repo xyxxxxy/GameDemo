@@ -96,7 +96,7 @@ void ASGamePlayerController::CloseActionMenu()
 
 void ASGamePlayerController::CreateMainWidget()
 {
-	DISPLAY_LOG(TEXT("PC Excute!"));
+	DISPLAY_LOG(TEXT("PC CreateMainWidget!"));
 	if(!MainWidgetInstance && ensure(DefaultMainWidgetClass))
 	{
 		MainWidgetInstance = CreateWidget<UUserWidget>(this,DefaultMainWidgetClass);

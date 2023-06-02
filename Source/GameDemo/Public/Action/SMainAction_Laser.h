@@ -62,6 +62,10 @@ public:
 private:
 
 	bool bIsReflect = false;
+
+	UPROPERTY()
+	AActor* HitActor;
+	
 };
 
 

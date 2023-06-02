@@ -21,21 +21,16 @@ class GAMEDEMO_API USAction : public UObject,public ISActionInterface
 	GENERATED_BODY()
 
 protected:
+	
 	UPROPERTY(EditAnywhere,Category="Tags")
 	FGameplayTagContainer BlockedTags;
 
 	UPROPERTY(EditAnywhere,Category="Tags")
 	FGameplayTagContainer GrantTags;
-
-	UPROPERTY(EditAnywhere,Category="Tags")
-	FGameplayTagContainer DeployBlockedTags;
 	
 	UPROPERTY(EditDefaultsOnly,Category="Action")
 	UAnimMontage* ActionAnimMontage;
-
-	UPROPERTY(EditDefaultsOnly,Category="Action")
-	UTexture2D* ActionIcon;
-
+	
 	UPROPERTY(EditDefaultsOnly,Category="Action")
 	bool bIsEnableTick = false;
 

@@ -8,7 +8,6 @@
 
 class USNoCollisionComponent;
 class USoundCue;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEffectEnd);
 
 UCLASS()
 class GAMEDEMO_API ASNoCollisionActor : public AActor

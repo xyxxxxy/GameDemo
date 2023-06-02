@@ -36,7 +36,8 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> BeamActors;
-
+	
+	UFUNCTION(BlueprintCallable)
 	void ClearBeams();
 
 	UFUNCTION(BlueprintCallable)
