@@ -26,7 +26,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly,Category = "Laser")
 	float LaserDistance = 1500.0f;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Laser")
+	UPROPERTY(BlueprintReadOnly,Category = "Laser")
 	FVector BeamEnd = FVector::ZeroVector;
 
 	UPROPERTY(EditDefaultsOnly,Category = "Laser")

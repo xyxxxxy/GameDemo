@@ -23,7 +23,7 @@ void ASBeamActor::SetEnds(FVector Start, FVector End)
 	
 	FVector Direction = Distance.GetSafeNormal();
 	FRotator Rotation = FRotationMatrix::MakeFromZ(Direction).Rotator();
-	StaticMeshComp->SetWorldLocationAndRotation(Start,Rotation,false,nullptr,ETeleportType::TeleportPhysics);
+	StaticMeshComp->SetWorldLocationAndRotation(Start,Rotation,false,nullptr,ETeleportType::None);
 
 	StaticMeshComp->SetWorldScale3D(FVector(0.05f,0.05f,Distance.Size()/100.0f));
 }

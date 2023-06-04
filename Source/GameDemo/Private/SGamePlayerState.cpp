@@ -105,3 +105,20 @@ void ASGamePlayerState::SetCurrentMainAction(USAction* OldAction, USAction* NewA
 	}
 }
 
+void ASGamePlayerState::AddCredits(int32 Delta)
+{
+	if(!ensure(Delta>0.0f))
+	{
+		return;
+	}
+	Credits+=Delta;
+	OnCreditsChanged.Broadcast(this,Credits,Delta);
+}
+
+int32 ASGamePlayerState::GetCredits() const
+{
+	return Credits;
+}
+
+
+

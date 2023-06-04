@@ -12,5 +12,21 @@ class GAMEDEMO_API ASGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	
 	ASGameMode();
+	
+protected:
+
+	UPROPERTY(EditAnywhere,Category = "CheckPoint")
+	AActor* CheckPoint;
+
+	UFUNCTION(BlueprintCallable,Category = "Score")
+	void GainCoin(AActor* InstigatorActor, int32 PerCoin);
+
+	virtual void StartPlay() override;
+
+
+
+
+
 };

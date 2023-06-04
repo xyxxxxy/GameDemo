@@ -46,10 +46,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly,Category = "Sound")
 	USoundBase* RecoverSound;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Physics")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Physics")
 	bool bShouldSimulatePhysics = false;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UPROPERTY()
 	UStaticMeshComponent* CollisionComp;
 
 	FTimerDelegate EffectDelegate;
@@ -63,10 +63,11 @@ protected:
 
 	void ClearTimer();
 
-	UFUNCTION(BlueprintImplementableEvent,Category = "Action |UI",meta=( DisplayName = "CreateTimeWidget"))
+	UFUNCTION(BlueprintImplementableEvent,Category = "Action |UI",meta = ( DisplayName = "CreateTimeWidget"))
 	void K2_CreateTimeWidget();
 
 	virtual void BeginPlay() override;
+
 
 private:
 	

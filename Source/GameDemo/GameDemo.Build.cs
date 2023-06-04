@@ -10,9 +10,7 @@ public class GameDemo : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine",
 			"InputCore","GameplayTags","PhysicsCore","Niagara","SlateCore"});
-
-		PublicDependencyModuleNames.AddRange(new string[]{"AutomaticRadialMenus"});
-
+		
 		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 		
 	}

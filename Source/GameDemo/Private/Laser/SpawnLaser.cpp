@@ -4,6 +4,7 @@
 #include "Laser/SpawnLaser.h"
 #include "Components/ArrowComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Laser/SLaserInterface.h"
 
 
 ASpawnLaser::ASpawnLaser()
@@ -76,6 +77,14 @@ void ASpawnLaser::CastLight(FVector Origin, FVector Direction, float Distance)
 		{	// End
 			BeamEnd = End;
 			bShouldContinue = false;
+		}
+		AActor* HitActor = LaserHitResult.GetActor();
+		if(HitActor)
+		{
+			if(HitActor->Implements<USLaserInterface>())
+			{
+				ISLaserInterface::Execute_LaserInteract(HitActor,this,true);
+			}
 		}
 		K2_SpawnBeam(BeamStart,BeamEnd);
 	}

@@ -15,6 +15,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnActionSWitchedForPS,
 	USAction*, NewAction,
 	FSActionProperty, NewActionProperty);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged,
+	class ASGamePlayerState*,PlayerState,int32,NewCredits,int32,Delta);
+
 UCLASS()
 class GAMEDEMO_API ASGamePlayerState : public APlayerState
 {
@@ -70,8 +73,24 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Action")
 	void SetCurrentMainAction(USAction* OldAction,USAction* NewAction);
 
+	UFUNCTION(BlueprintCallable,Category = "Score")
+	void AddCredits(int32 Delta);
 
-	UPROPERTY(BlueprintAssignable)
+	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "Score")
+	int32 GetCredits() const;
+
+	// UFUNCTION(BlueprintCallable,Category = "Score")
+	// void RemoveCredits(int32 Delta);
+
+
+	UPROPERTY(BlueprintAssignable,Category = "Events")
 	FOnActionSWitchedForPS OnActionSWitchedForPS;
+
+	UPROPERTY(BlueprintAssignable,Category = "Events")
+	FOnCreditsChanged OnCreditsChanged;
+
+private:
+
+	int32 Credits = 0;
 	
 };

@@ -12,3 +12,28 @@ ASGameMode::ASGameMode()
 {
 	PlayerStateClass = ASGamePlayerState::StaticClass();
 }
+
+void ASGameMode::GainCoin(AActor* InstigatorActor, int32 PerCoin)
+{
+	APawn* Pawn = Cast<APawn>(InstigatorActor);
+	if(Pawn)
+	{
+		if(ASGamePlayerState* PS = Pawn->GetPlayerState<ASGamePlayerState>())
+		{
+			PS->AddCredits(PerCoin);
+		}
+	}
+}
+
+void ASGameMode::StartPlay()
+{
+	Super::StartPlay();
+
+	if(CheckPoint)
+	{
+		ASInteractActor_CheckPoint::LastCheckPoint = Cast<ASInteractActor_CheckPoint>(CheckPoint);
+	}
+
+}
+
+

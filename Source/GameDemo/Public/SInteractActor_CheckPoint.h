@@ -12,6 +12,7 @@ class GAMEDEMO_API ASInteractActor_CheckPoint : public ASInteractActor
 	GENERATED_BODY()
 
 public:
+	static ASInteractActor_CheckPoint* LastCheckPoint;
 	
 	ASInteractActor_CheckPoint();
 	
@@ -35,7 +36,7 @@ private:
 	
 	static int32 CPNumber;
 	
-	static ASInteractActor_CheckPoint* LastCheckPoint;
+
 
 	UPROPERTY()
 	UUserWidget* CheckWidgetInstance;

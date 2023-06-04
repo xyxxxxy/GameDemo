@@ -96,11 +96,13 @@ void USNoCollisionComponent::ClearTimer()
 void USNoCollisionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	DISPLAY_LOG(TEXT("Comp Begin"));
 	ParentActor = GetOwner();
 	
 	if(ParentActor)
 	{
+		CollisionComp = Cast<UStaticMeshComponent>
+		(ParentActor->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 		if(ensure(CollisionComp))
 		{
 			CollisionComp->SetCollisionProfileName("SetNoCollision");
@@ -110,21 +112,8 @@ void USNoCollisionComponent::BeginPlay()
 			bIsTranslucent=false;
 			CollisionComp->SetSimulatePhysics(bShouldSimulatePhysics);
 		}
-		else
-		{
-			CollisionComp = Cast<UStaticMeshComponent>
-			(ParentActor->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-			if(ensure(CollisionComp))
-			{
-				CollisionComp->SetCollisionProfileName("SetNoCollision");
-				ParentActor->Tags = {"NoCollision"};
-				EffectTime=5.0f;
-				TranslucentCollisionName="OverlapAll";
-				bIsTranslucent=false;
-				CollisionComp->SetSimulatePhysics(bShouldSimulatePhysics);
-			}
-		}
 	}
+	
 }
 
 

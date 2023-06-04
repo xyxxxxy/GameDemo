@@ -21,4 +21,6 @@ public:
 
 	virtual void SetState_Implementation(AActor* InstigatorActor, bool NewState = false) override;
 
+	
+
 };

@@ -20,7 +20,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly,Category="Component")
 	USceneComponent* SceneComp;
 
-	UPROPERTY(EditDefaultsOnly,Category="Component")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Component")
 	UStaticMeshComponent* StaticMeshComp;
 
 public:

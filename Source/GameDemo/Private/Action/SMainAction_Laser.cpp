@@ -36,13 +36,11 @@ void USMainAction_Laser::CastLight(AActor* InstigatorActor,FVector HandOrigin, F
 	if(!HitResult.bBlockingHit)
 	{
 		K2_SpawnBeam(L_HandOrigin,End);
-		DISPLAY_LOG(FString("FirstLaser No Hit!"));
 		if(HitActor)
 		{
 			if(HitActor->Implements<USLaserSensorInterface>())
 			{
 				ISLaserSensorInterface::Execute_SetState(HitActor,InstigatorActor,false);
-				DISPLAY_LOG(FString("LaserSensor : False!"));
 			}
 			HitActor = nullptr;
 		}
@@ -54,7 +52,6 @@ void USMainAction_Laser::CastLight(AActor* InstigatorActor,FVector HandOrigin, F
 		if(HitActor->Implements<USLaserSensorInterface>())
 		{
 			ISLaserSensorInterface::Execute_SetState(HitActor,InstigatorActor,false);
-			DISPLAY_LOG(FString("LaserSensor : False!"));
 		}
 		HitActor = nullptr;
 	}
@@ -67,7 +64,8 @@ void USMainAction_Laser::CastLight(AActor* InstigatorActor,FVector HandOrigin, F
 	bool bShouldContinue = true;
 
 	int32 BeamNumbers = 0;
-	
+
+	// loop
 	while(bShouldContinue && BeamNumbers < MaxBeamNumber)
 	{
 		FHitResult LaserHitResult;
@@ -87,13 +85,12 @@ void USMainAction_Laser::CastLight(AActor* InstigatorActor,FVector HandOrigin, F
 		if(LaserHitResult.bBlockingHit)
 		{
 			// End
-			BeamEnd = HitResult.ImpactPoint;
+			BeamEnd = LaserHitResult.ImpactPoint;
 			
 			if(LaserHitResult.PhysMaterial.Get() == DesiredPhysicsMaterial)
 			{
 				L_Origin = LaserHitResult.ImpactPoint;
 				L_Direction = UKismetMathLibrary::MirrorVectorByNormal(L_Direction,LaserHitResult.ImpactNormal);
-				bShouldContinue = true;
 			}
 			else
 			{
