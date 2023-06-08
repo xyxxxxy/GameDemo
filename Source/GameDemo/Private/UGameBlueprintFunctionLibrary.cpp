@@ -38,9 +38,9 @@ void UGameBlueprintFunctionLibrary::ControlPlayerInput(const UObject* WorldConte
 	
 }
 
-void UGameBlueprintFunctionLibrary::Rebirth(APawn* Pawn,APlayerController* PC)
+void UGameBlueprintFunctionLibrary::Rebirth(APawn* Pawn,APlayerController* PC,AActor* InstigatorActor)
 {
-	ASInteractActor_CheckPoint::Respawn(Pawn,PC);
+	ASInteractActor_CheckPoint::Respawn(Pawn,PC,InstigatorActor);
 }
 
 //item

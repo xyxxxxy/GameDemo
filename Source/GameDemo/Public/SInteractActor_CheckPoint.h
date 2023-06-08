@@ -12,11 +12,14 @@ class GAMEDEMO_API ASInteractActor_CheckPoint : public ASInteractActor
 	GENERATED_BODY()
 
 public:
+	
 	static ASInteractActor_CheckPoint* LastCheckPoint;
+
+	static int32 CPNumber;
 	
 	ASInteractActor_CheckPoint();
 	
-	static void Respawn(APawn* Pawn,APlayerController* PC);
+	static void Respawn(APawn* Pawn,APlayerController* PC,AActor* InstigatorActor);
 
 	virtual void Interact_Implementation(APawn* InstigatorActor) override;
 
@@ -33,12 +36,7 @@ protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
 	
 private:
-	
-	static int32 CPNumber;
-	
-
 
 	UPROPERTY()
 	UUserWidget* CheckWidgetInstance;
-	
 };

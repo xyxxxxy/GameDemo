@@ -32,6 +32,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	float Time;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	float ExistTime = 30.0f;
+
 	UFUNCTION()
 	void Connect();
 

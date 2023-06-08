@@ -25,15 +25,5 @@ void ASGameMode::GainCoin(AActor* InstigatorActor, int32 PerCoin)
 	}
 }
 
-void ASGameMode::StartPlay()
-{
-	Super::StartPlay();
-
-	if(CheckPoint)
-	{
-		ASInteractActor_CheckPoint::LastCheckPoint = Cast<ASInteractActor_CheckPoint>(CheckPoint);
-	}
-
-}
 
 

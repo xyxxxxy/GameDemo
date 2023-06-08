@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SInteractActor_CheckPoint.h"
+#include "SAttributeComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "SGameMacros.h"
 
@@ -36,14 +37,25 @@ void ASInteractActor_CheckPoint::Interact_Implementation(APawn* InstigatorActor)
 	}
 }
 
-void ASInteractActor_CheckPoint::Respawn(APawn* Pawn,APlayerController* PC)
+void ASInteractActor_CheckPoint::Respawn(APawn* Pawn,APlayerController* PC,AActor* InstigatorActor)
 {
-	if(LastCheckPoint != nullptr)
+	if(!LastCheckPoint)
+	{
+		return;
+	}
+	if(ensure(LastCheckPoint))
 	{
 		PC->UnPossess();
-		Pawn->SetActorTransform(FTransform(LastCheckPoint->PlayerLocationComp->GetComponentRotation(),
+		Pawn->SetActorTransform(
+			FTransform(LastCheckPoint->PlayerLocationComp->
+				GetComponentRotation()+FRotator(0.0f,90.0f,0.0f),
 	LastCheckPoint->PlayerLocationComp->GetComponentLocation()));
 		PC->Possess(Pawn);
+		if(USAttributeComponent* AttributeComp = Cast<USAttributeComponent>
+			(Pawn->GetComponentByClass(USAttributeComponent::StaticClass())))
+		{
+			AttributeComp->OnPlayerDeath.Broadcast(InstigatorActor);
+		}
 	}
 }
 

@@ -23,7 +23,7 @@ public:
 	static void ControlPlayerInput(const UObject* WorldContextObject,bool bIsEnabled);
 
 	UFUNCTION(BlueprintCallable,Category="GameLibrary | Player",meta=(WorldContext = "WorldContextObject"))
-	static void Rebirth(APawn* Pawn,APlayerController* PC);
+	static void Rebirth(APawn* Pawn,APlayerController* PC,AActor* InstigatorActor);
 
 	UFUNCTION(BlueprintCallable,Category="GameLibrary | Item")
 	static void FindItemInDataTable( FSItem item,bool& bIsFound,FSItemProperty& Property);

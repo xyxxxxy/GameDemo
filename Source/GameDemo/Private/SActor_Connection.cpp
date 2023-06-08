@@ -37,20 +37,31 @@ void ASActor_Connection::Connect()
 void ASActor_Connection::BeginPlay()
 {
 	Super::BeginPlay();
-	RelativeLocation=ConnectionComp->GetRelativeLocation()*2.0f;
+	RelativeLocation = ConnectionComp->GetRelativeLocation()*2.0f;
+	
+	FTimerHandle DestroyTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle,[this]()
+	{
+		Destroy();
+	},ExistTime,false);
 	
 }
 
 void ASActor_Connection::StopGrow(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
+	if(APawn* Pawn = Cast<APawn>(OtherActor))
+	{
+		EndLocation /= 2.0f;
+	}
+	
 	if(!HitComponent->IsSimulatingPhysics())
 	{
 		SetActorTickEnabled(false);
 	}
+
 }
 
-// Called every frame
 void ASActor_Connection::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

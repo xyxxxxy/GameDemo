@@ -37,7 +37,7 @@ void USNoCollisionComponent::Recover(AActor* InstigatorActor)
 			ActionComp->GetMainAction()->IsA<USMainAction_NoCollision>())
 		{
 			ActionComp->OnMainActionStartDeployed.Broadcast(ActionComp,InstigatorActor);
-			DISPLAY_LOG(TEXT("recover to deploy material!"));
+			//DISPLAY_LOG(TEXT("recover to deploy material!"));
 		}
 		else
 		{
@@ -89,14 +89,14 @@ bool USNoCollisionComponent::UpdateMaterial(UMaterialInstance* NewMaterial)
 
 void USNoCollisionComponent::ClearTimer()
 {
-	DISPLAY_LOG(TEXT("Clear TimerHandle!"));
+	//DISPLAY_LOG(TEXT("Clear TimerHandle!"));
 	GetWorld()->GetTimerManager().ClearTimer(EffectTimer);
 }
 
 void USNoCollisionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	DISPLAY_LOG(TEXT("Comp Begin"));
+	//DISPLAY_LOG(TEXT("Comp Begin"));
 	ParentActor = GetOwner();
 	
 	if(ParentActor)

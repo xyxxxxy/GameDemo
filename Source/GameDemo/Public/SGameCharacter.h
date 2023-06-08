@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "SGameCharacter.generated.h"
 
+class USAttributeComponent;
 class UPostProcessComponent;
 class USActionComponent;
 class USInteractComponent;
@@ -34,6 +35,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="SkillComponent")
 	USInteractComponent* InteractComp;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="SkillComponent")
+	USAttributeComponent* AttributeComp;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="SkillComponent")
 	USActionComponent* ActionComp;

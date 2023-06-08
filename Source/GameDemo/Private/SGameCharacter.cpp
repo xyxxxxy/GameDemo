@@ -2,6 +2,7 @@
 
 #include "SGameCharacter.h"
 
+#include "SAttributeComponent.h"
 #include "SInteractComponent.h"
 #include "Action/SActionComponent.h"
 #include "Camera/CameraComponent.h"
@@ -36,6 +37,8 @@ ASGameCharacter::ASGameCharacter()
 	InteractComp=CreateDefaultSubobject<USInteractComponent>(TEXT("InteractComp"));
 
 	ActionComp=CreateDefaultSubobject<USActionComponent>(TEXT("ActionComp"));
+
+	AttributeComp = CreateDefaultSubobject<USAttributeComponent>(TEXT("AttributeComp"));
 
 	PostProcessComp=CreateDefaultSubobject<UPostProcessComponent>(TEXT("PostProcessComp"));
 	PostProcessComp->SetupAttachment(RootComponent);

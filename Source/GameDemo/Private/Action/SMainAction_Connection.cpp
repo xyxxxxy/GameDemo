@@ -278,7 +278,7 @@ void USMainAction_Connection::InitialVariable()
 
 bool USMainAction_Connection::IsConnectionClass(const FHitResult& HitResult) const
 {
-	if(HitResult.GetActor()->GetClass() == DefaultConnectionClass)
+	if(HitResult.GetActor() && HitResult.GetActor()->GetClass() == DefaultConnectionClass)
 	{
 		HitResult.GetActor()->Destroy();
 		return true;
